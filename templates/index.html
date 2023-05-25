@@ -1,0 +1,340 @@
+{% load static %}
+<!doctype html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="google" content="notranslate">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- <link rel="manifest" href="./manifest.json"> -->
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+    <title>Dealer Solutions</title>
+</head>
+
+<body>
+    <div class="drawer drawer-end">
+        <input id="sidebar" type="checkbox" class="drawer-toggle" />
+        <div class="drawer-content">
+            <!-- Add a placeholder element for the toast notification -->
+            <div id="toastContainer"
+                class="hidden top-8 left-1/2 transform -translate-x-2/4 -translate-y-2/4 max-w-lg fixed bg-rose-500 text-white font-medium w-full z-20 shadow-lg px-4 py-8 pointer-events-none">
+                ইন্টারনেট অন করে আবার চেষ্টা করুন
+            </div>
+
+            <!-- Page content start -->
+            <nav class="max-w-lg mx-auto px-5 py-6 h-44 bg-themeblue">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-white text-2xl font-bold">৳ <span>24,420</span>
+                        </h3>
+                        <p class="text-white/80">আজকের বিক্রি</p>
+                    </div>
+                    <label for="sidebar">
+                        <div class="avatar online cursor-pointer">
+                            <div class="w-10 rounded-full ring ring-offset-base-100 ring-offset-2">
+                                <img src="{% static 'assets/img/user.jpg' %}" />
+                            </div>
+                        </div>
+                    </label>
+
+                </div>
+
+                <div class="grid grid-cols-4 gap-4 mt-3">
+                    <div class="flex flex-col justify-center items-center">
+                        <div
+                            class="w-12 h-12 bg-[#2e75fc] text-white rounded-md flex justify-center items-center shadow-xl mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008z" />
+                            </svg>
+
+                        </div>
+                        <p class="text-white text-center text-xs font-medium">Send Money</p>
+                    </div>
+                    <div class="flex flex-col justify-center items-center">
+                        <div
+                            class="w-12 h-12 bg-[#2e75fc] text-white rounded-md flex justify-center items-center shadow-xl mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008z" />
+                            </svg>
+
+                        </div>
+                        <p class="text-white text-center text-xs font-medium">Send Money</p>
+                    </div>
+                    <div class="flex flex-col justify-center items-center">
+                        <div
+                            class="w-12 h-12 bg-[#2e75fc] text-white rounded-md flex justify-center items-center shadow-xl mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008z" />
+                            </svg>
+
+                        </div>
+                        <p class="text-white text-center text-xs font-medium">Send Money</p>
+                    </div>
+                    <div class="flex flex-col justify-center items-center">
+                        <div
+                            class="w-12 h-12 bg-[#2e75fc] text-white rounded-md flex justify-center items-center shadow-xl mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008z" />
+                            </svg>
+
+                        </div>
+                        <p class="text-white text-center text-xs font-medium">Send Money</p>
+                    </div>
+
+
+                </div>
+            </nav>
+
+            <section>
+                <div class="grid grid-cols-2 gap-4 text-slate-800 font-medium">
+                    <a href="">
+                        <div
+                            class="p-4 flex flex-col justify-center items-center shadow-md bg-white rounded-md cursor-pointer active:bg-gray-300 transition duration-150 ease-in-out">
+                            <img src="{% static 'assets/img/icons/buy-product.png' %}" height="48" width="48" alt="">
+                            <p class="font-medium text-gray-900">কেনা</p>
+                        </div>
+                    </a>
+                    <a href="">
+                        <div
+                            class="p-4 flex flex-col justify-center items-center shadow-md bg-white rounded-md cursor-pointer active:bg-gray-300 transition duration-150 ease-in-out">
+                            <img src="{% static 'assets/img/icons/sell-product.png' %}" height="48" width="48" alt="">
+                            <p class="font-medium text-gray-900">বেচা</p>
+                        </div>
+                    </a>
+                    <a href="">
+                        <div
+                            class="p-4 flex flex-col justify-center items-center shadow-md bg-white rounded-md cursor-pointer active:bg-gray-300 transition duration-150 ease-in-out">
+                            <img src="{% static 'assets/img/icons/earning-notes.png' %}" height="48" width="48" alt="">
+                            <p class="font-medium text-gray-900">আয়ের খাতা</p>
+                        </div>
+                    </a>
+                    <a href="">
+                        <div
+                            class="p-4 flex flex-col justify-center items-center shadow-md bg-white rounded-md cursor-pointer active:bg-gray-300 transition duration-150 ease-in-out">
+                            <img src="{% static 'assets/img/icons/expences.png' %}" height="48" width="48" alt="">
+                            <p class="font-medium text-gray-900">খরচের খাতা</p>
+                        </div>
+                    </a>
+                    <a href="">
+                        <div
+                            class="p-4 flex flex-col justify-center items-center shadow-md bg-white rounded-md cursor-pointer active:bg-gray-300 transition duration-150 ease-in-out">
+                            <img src="{% static 'assets/img/icons/distribution.png' %}" height="48" width="48" alt="">
+                            <p class="font-medium text-gray-900">ডিস্ট্রিবিউশন</p>
+                        </div>
+                    </a>
+                    <a href="">
+                        <div
+                            class="p-4 flex flex-col justify-center items-center shadow-md bg-white rounded-md cursor-pointer active:bg-gray-300 transition duration-150 ease-in-out">
+                            <img src="{% static 'assets/img/icons/business-summary.png' %}" height="48" width="48" alt="">
+                            <p class="font-medium text-gray-900">ব্যবসার অবস্থা</p>
+                        </div>
+                    </a>
+                    <a href="">
+                        <div
+                            class="p-4 flex flex-col justify-center items-center shadow-md bg-white rounded-md cursor-pointer active:bg-gray-300 transition duration-150 ease-in-out">
+                            <img src="{% static 'assets/img/icons/product-stock.png' %}" height="48" width="48" alt="">
+                            <p class="font-medium text-gray-900">পণ্যের স্টক</p>
+                        </div>
+                    </a>
+                    <a href="">
+                        <div
+                            class="p-4 flex flex-col justify-center items-center shadow-md bg-white rounded-md cursor-pointer active:bg-gray-300 transition duration-150 ease-in-out">
+                            <img src="{% static 'assets/img/icons/employe-management.png' %}" height="48" width="48" alt="">
+                            <p class="font-medium text-gray-900">কর্মী ব্যাবস্থাপনা</p>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+            <footer
+                class="max-w-lg mx-auto grid grid-cols-4 bg-white shadow-[0px_-1px_5px_0px_rgba(0,0,0,0.1)] text-sm text-gray-400 font-medium fixed inset-x-0 bottom-0 transition ease-in z-10">
+                <a href="">
+                    <div class="py-2 active:bg-gray-300 transition duration-150 ease-in-out">
+                        <div class="flex flex-col justify-center items-center active">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="w-6 h-6">
+                                <path
+                                    d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" />
+                                <path
+                                    d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z" />
+                            </svg>
+                            <p>হোম</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="">
+                    <div class="py-2 active:bg-gray-300 transition duration-150 ease-in-out">
+                        <div class="flex flex-col justify-center items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="w-6 h-6">
+                                <path
+                                    d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" />
+                                <path
+                                    d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z" />
+                            </svg>
+                            <p>হোম</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="">
+                    <div class="py-2 active:bg-gray-300 transition duration-150 ease-in-out">
+                        <div class="flex flex-col justify-center items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="w-6 h-6">
+                                <path
+                                    d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" />
+                                <path
+                                    d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z" />
+                            </svg>
+                            <p>হোম</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="">
+                    <div class="py-2 active:bg-gray-300 transition duration-150 ease-in-out">
+                        <div class="flex flex-col justify-center items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="w-6 h-6">
+                                <path
+                                    d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" />
+                                <path
+                                    d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z" />
+                            </svg>
+                            <p>হোম</p>
+                        </div>
+                    </div>
+                </a>
+            </footer>
+            <!-- Page content end -->
+        </div>
+        <div class="drawer-side">
+            <label for="sidebar" class="drawer-overlay"></label>
+            <ul class="menu p-4 w-60 bg-base-100 space-y-2 font-medium rounded-lg">
+                <!-- Sidebar content start -->
+
+                <div>
+                    <div class="flex items-center">
+                        <div class="avatar cursor-pointer mr-3">
+                            <div class="w-10 rounded-full ring ring-offset-base-100 ring-offset-2">
+                                <img src="{% static 'assets/img/user.jpg' %}" />
+                            </div>
+                        </div>
+                        <div>
+                            <p class="font-semibold truncate">রফিক উদ্দিন</p>
+                            <p class="text-gray-600">ম্যানেজার</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">+880 1700000000</p>
+                </div>
+
+                <hr>
+                <li>
+                    <a href="" class="flex items-center p-2 rounded-lg hover:bg-gray-100">
+                        <svg aria-hidden="true"
+                            class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900"
+                            fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                            <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                        </svg>
+                        <span class="ml-3">ড্যাশবোর্ড</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="" class="flex items-center p-2 rounded-lg hover:bg-gray-100">
+                        <svg aria-hidden="true"
+                            class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900"
+                            fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                            <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                        </svg>
+                        <span class="ml-3">পণ্য বিবরণী</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="" class="flex items-center p-2 rounded-lg hover:bg-gray-100">
+                        <svg aria-hidden="true"
+                            class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900"
+                            fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                            <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                        </svg>
+                        <span class="ml-3">কোম্পানি</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="" class="flex items-center p-2 rounded-lg hover:bg-gray-100">
+                        <svg aria-hidden="true"
+                            class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900"
+                            fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                            <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                        </svg>
+                        <span class="ml-3">কাস্টমার</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="" class="flex items-center p-2 rounded-lg hover:bg-gray-100">
+                        <svg aria-hidden="true"
+                            class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900"
+                            fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                            <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                        </svg>
+                        <span class="ml-3">অর্ডার</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="" class="flex items-center p-2 rounded-lg hover:bg-gray-100">
+                        <svg aria-hidden="true"
+                            class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900"
+                            fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                            <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                        </svg>
+                        <span class="ml-3">একাউন্টস</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="" class="flex items-center p-2 rounded-lg hover:bg-gray-100">
+                        <svg aria-hidden="true"
+                            class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900"
+                            fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                            <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                        </svg>
+                        <span class="ml-3">প্রতিষ্ঠান</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="" class="flex items-center p-2 rounded-lg hover:bg-gray-100">
+                        <svg aria-hidden="true"
+                            class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900"
+                            fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                            <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                        </svg>
+                        <span class="ml-3">লগ আউট</span>
+                    </a>
+                </li>
+                <p class="text-xs text-gray-400 fixed right-3 bottom-1">ver. 26ac373f</p>
+                <!-- Sidebar content end -->
+            </ul>
+        </div>
+    </div>
+
+</body>
+
+<script src="{% static 'assets/js/app.js' %}"></script>
+
+
+</html>

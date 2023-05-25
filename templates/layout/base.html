@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title %}Card Manager{% endblock %}</title>
+        <!-- Add any custom head elements here -->
+        {% include 'layout/components/head.html' %}
+     {% block custom_css %}
+        {% endblock %}
+    </head>
+    <body>
+        <!-- Load sidebar files here -->
+        {% block sidebar %}
+            {% include 'layout/components/sidebar.html' %}
+        {% endblock %}
+
+
+        <!-- Load any header files here -->
+        <div id="right-panel" class="right-panel">
+        {% block header %}
+            {% include 'layout/components/header.html' %}
+        {% endblock %}
+
+        <!-- Load main content here -->
+        <!-- Content -->
+        <div class="content">
+        <div class="animated fadeIn">
+            {% block content %}BODY CONTENT{% endblock %}
+        </div>
+        </div>
+
+        <!-- Load any footer files here -->
+        <div class="clearfix"></div>
+        {% block footer %}
+            {% include 'layout/components/footer.html' %}
+        {% endblock %}
+        </div>
+
+        <!-- Load any required JavaScript files here -->
+        {% block js %}
+            {% include 'layout/components/js_scripts.html' %}
+        {% endblock %}
+    </body>
+</html>
