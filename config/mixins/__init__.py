@@ -1,1 +1,1 @@
-from .modesl import TimeStampMixin, UserMixin
+from .modesl import TimeStampMixin, UserMixin, UserTimeStampMixin

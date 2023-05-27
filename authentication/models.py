@@ -1,7 +1,7 @@
 import uuid
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
-from config.mixins import TimeStampMixin
+from config.mixins import TimeStampMixin, UserTimeStampMixin
 from phonenumber_field.modelfields import PhoneNumberField
 
 
@@ -108,3 +108,15 @@ class CustomUser(AbstractUser):
 #
 #     def __str__(self):
 #         return self.user
+
+class UserInformation(UserTimeStampMixin):
+    shop_name = models.CharField(max_length=255, blank=True, null=True)
+    shop_address = models.CharField(max_length=255, blank=True, null=True)
+    photo = models.ImageField(upload_to='user', null=True, blank=True, default='profile.png')
+    shop_photo = models.ImageField(upload_to='user/shop', null=True, blank=True)
+    nid_number = models.CharField(max_length=20, blank=True, null=True)
+    trade_licence = models.CharField(max_length=30, blank=True, null=True)
+    user = models.OneToOneField(CustomUser, on_delete=models.PROTECT, null=False, blank=False)
+
+    def __str__(self):
+        return f'{self.shop_name}-{self.user.get_full_name()}'

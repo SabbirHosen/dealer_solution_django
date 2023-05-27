@@ -1,9 +1,9 @@
-from django.forms import ModelForm
 from django import forms
-from .models import CustomUser
+from .models import CustomUser, UserInformation
 from django.utils.translation import gettext as _
 from phonenumber_field.widgets import RegionalPhoneNumberWidget
 from phonenumber_field.formfields import PhoneNumberField
+from .strings.string import SET_ROLE_CHOICES
 
 
 class UserLogin(forms.Form):
@@ -31,3 +31,24 @@ class UserLogin(forms.Form):
     #                                                         'sm:text-sm rounded-lg focus:ring-blue-600 '
     #                                                         'focus:border-blue-600 block w-full p-2.5 font-medium'}),
     #     }
+
+
+class UserSignupForm(forms.ModelForm):
+    user_role = forms.ChoiceField(choices=SET_ROLE_CHOICES, required=True)
+    class Meta:
+        model = CustomUser
+        fields = ['phone', 'first_name', 'last_name', 'email', 'password']
+
+    def save(self, commit=True):
+        user = super(UserSignupForm, self).save(commit=False)
+        user.set_password(self.cleaned_data["password"])
+        if commit:
+            user.save()
+        return user
+
+
+class UserInfoForm(forms.ModelForm):
+    class Meta:
+        model = UserInformation
+        fields = '__all__'
+        exclude = ['user']
