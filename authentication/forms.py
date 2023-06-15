@@ -7,11 +7,27 @@ from .strings.string import SET_ROLE_CHOICES
 
 
 class UserLogin(forms.Form):
-    phone = PhoneNumberField(widget=RegionalPhoneNumberWidget(),
+    phone = PhoneNumberField(widget=RegionalPhoneNumberWidget(attrs={'class': 'bg-gray-50 border border-gray-300 '
+                                                                              'text-gray-900 sm:text-sm rounded-lg '
+                                                                              'focus:ring-blue-600 '
+                                                                              'focus:border-blue-600 block w-full '
+                                                                              'p-2.5 font-medium ['
+                                                                              'appearance:textfield] ['
+                                                                              '&::-webkit-outer-spin-button'
+                                                                              ']:appearance-none ['
+                                                                              '&::-webkit-inner-spin-button'
+                                                                              ']:appearance-none',
+                                                                     'placeholder': "+8801000000000"}),
                              label=_('মোবাইল'),
+                             required=True
                              )
-    password = forms.CharField(widget=forms.PasswordInput(),
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'bg-gray-50 border border-gray-300 '
+                                                                          'text-gray-900 sm:text-sm rounded-lg '
+                                                                          'focus:ring-blue-600 focus:border-blue-600 '
+                                                                          'block w-full p-2.5 font-medium',
+                                                                 "placeholder": "••••••••"}),
                                label=_('পাসওয়ার্ড'),
+                               required=True
                                )
     # class Meta:
     #     # model = CustomUser
@@ -35,6 +51,7 @@ class UserLogin(forms.Form):
 
 class UserSignupForm(forms.ModelForm):
     user_role = forms.ChoiceField(choices=SET_ROLE_CHOICES, required=True)
+
     class Meta:
         model = CustomUser
         fields = ['phone', 'first_name', 'last_name', 'email', 'password']
