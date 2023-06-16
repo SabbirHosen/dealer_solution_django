@@ -3,9 +3,9 @@ const customerNameField = document.getElementById('customerName');
 const samePriceBtn = document.getElementById('samePriceBtn');
 
 const BASE_URL = 'https://dealersolutions.com/api';
-// const CUSTOMER = `${BASE_URL}/auth/register`;
+// const CUSTOMER = `${BASE_URL}/customer`;
 const CUSTOMER =
-	'http://127.0.0.1:8000/retailer/api/customer-info/';
+	'/retailer/api/customer-info/';
 
 // Today's date selected
 datePicker.value = new Date().toISOString().substring(0, 10);

@@ -169,7 +169,7 @@
                 <hr>
 
                 <li>
-                    <a href="" class="flex items-center p-2 rounded-lg hover:bg-gray-100">
+                    <a href="{% url 'authentication:edit-user-profile' %}" class="flex items-center p-2 rounded-lg hover:bg-gray-100">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                             class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900">
                             <path fill-rule="evenodd"
@@ -195,7 +195,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="./reset-pin.html" class="flex items-center p-2 rounded-lg hover:bg-gray-100">
+                    <a href="{% url 'authentication:pin-change' %}" class="flex items-center p-2 rounded-lg hover:bg-gray-100">
 
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                             class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900">

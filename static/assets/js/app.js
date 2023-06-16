@@ -13,7 +13,7 @@ const suggestionsList = document.getElementById('suggestionsList');
 const BASE_URL = 'https://dealersolutions.com/api';
 // const CUSTOMER = `${BASE_URL}/auth/register`;
 const CUSTOMER =
-	'http://127.0.0.1:8000/retailer/api/customer-info/';
+	'/retailer/api/customer-info/';
 
 // Toast hide and show on internet availability
 window.addEventListener('online', () => {
