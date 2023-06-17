@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.db.models import Sum
 from django.http import JsonResponse
@@ -219,3 +219,85 @@ class RetailerCollection(LoginRequiredMixin, View):
         return redirect('retailer:retailer-home')
 
 
+class RetailerBusinessStatus(LoginRequiredMixin, View):
+    login_url = reverse_lazy('authentication:login')
+    template_name = 'business-status.html'
+
+    def get(self, request):
+        return render(request, template_name=self.template_name)
+
+
+class RetailerBusinessStatusData(LoginRequiredMixin, View):
+    login_url = reverse_lazy('authentication:login')
+
+    def get(self, request, status, time_period):
+        model_map = {
+            'buy-sell': Sell,
+            'collection': CashCollection,
+            'expences': Expense,
+            'due-summary': Sell
+
+        }
+        model_of = model_map.get(status)
+        print(model_of)
+        if time_period == 'day':
+            objects = model_of.objects.filter(retailer=request.user, date=datetime.now().date())
+        elif time_period == 'week':
+            objects = model_of.objects.filter(retailer=request.user, date__gte=datetime.now()-timedelta(days=7))
+        elif time_period == 'month':
+            objects = model_of.objects.filter(retailer=request.user, date__gte=datetime.now()-timedelta(days=30))
+        elif time_period == 'halfYear':
+            objects = model_of.objects.filter(retailer=request.user, date__gte=datetime.now()-timedelta(days=183))
+        elif time_period == 'year':
+            objects = model_of.objects.filter(retailer=request.user, date__gte=datetime.now()-timedelta(days=365))
+        else:
+            objects = model_of.objects.filter(retailer=request.user)
+        # data = []
+        if status == 'buy-sell':
+            data = []
+            key = 1
+            total = 0
+            for obj in objects:
+                temp = {
+                    'key': key,
+                    'date': obj.date,
+                    'amount': obj.payable_amount
+                }
+                data.append(temp)
+                total += obj.payable_amount
+                key += 1
+            # data.append({'total': total})
+        elif status == 'collection' or status == 'expences':
+            data = []
+            key = 1
+            total = 0
+            for obj in objects:
+                temp = {
+                    'key': key,
+                    'date': obj.date,
+                    'amount': obj.paid_amount
+                }
+                data.append(temp)
+                total += obj.paid_amount
+                key += 1
+            # data.append({'total': total})
+        elif status == 'due-summary':
+            data = []
+            key = 1
+            total = 0
+            for obj in objects:
+                if obj.get_due > 0:
+                    temp = {
+                        'key': key,
+                        'date': obj.date,
+                        'amount': obj.get_due
+                    }
+                    data.append(temp)
+                    total += obj.get_due
+                    key += 1
+            # data.append({'total': total})
+        print('-'*100)
+        print(status, time_period)
+        print(data)
+        print(objects)
+        return JsonResponse(status=200, data=data, safe=False)

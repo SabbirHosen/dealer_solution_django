@@ -1,9 +1,10 @@
 const BASE_URL =
-	'https://gist.githubusercontent.com/shahriarshafin/e66b4805dc1ebe9f25bd7def3440acf2/raw/c8f19af516fccba00cc7dfcc68a20f7caa054c59/customer.json';
+	'api';
 
 const dayBtn = document.getElementById('dayBtn');
 const weekBtn = document.getElementById('weekBtn');
 const monthBtn = document.getElementById('monthBtn');
+const halfYearBtn = document.getElementById('halfYearBtn');
 const yearBtn = document.getElementById('yearBtn');
 const chooseStatusSelect = document.getElementById('chooseStatus');
 
@@ -17,6 +18,10 @@ weekBtn.addEventListener('click', function () {
 
 monthBtn.addEventListener('click', function () {
 	handleButtonClick('month');
+});
+
+halfYearBtn.addEventListener('click', function () {
+	handleButtonClick('halfYear');
 });
 
 yearBtn.addEventListener('click', function () {
@@ -37,8 +42,8 @@ function handleButtonClick(timePeriod) {
 	let apiUrl;
 	switch (selectedValue) {
 		case 'buySell':
-			// apiUrl = `${BASE_URL}/buy-sell/${timePeriod}`;
-			apiUrl = `${BASE_URL}`;
+			apiUrl = `${BASE_URL}/buy-sell/${timePeriod}`;
+			// apiUrl = `${BASE_URL}`;
 			break;
 		case 'collection':
 			apiUrl = `${BASE_URL}/collection/${timePeriod}`;
@@ -62,6 +67,7 @@ function removeActiveClass() {
 	dayBtn.classList.remove('active');
 	weekBtn.classList.remove('active');
 	monthBtn.classList.remove('active');
+	halfYearBtn.classList.remove('active');
 	yearBtn.classList.remove('active');
 }
 
@@ -75,6 +81,9 @@ function setActiveButton(timePeriod) {
 			break;
 		case 'month':
 			monthBtn.classList.add('active');
+			break;
+		case 'halfYear':
+			halfYearBtn.classList.add('active');
 			break;
 		case 'year':
 			yearBtn.classList.add('active');
@@ -91,25 +100,33 @@ function fetchData(apiUrl) {
 			const wrapperDiv = document.getElementById('wrapper');
 			wrapperDiv.innerHTML = '';
 
+			let totalAmount = 0;
+
 			data.forEach((item) => {
 				const htmlString = `
-          <div class="bg-gray-200/80 shadow px-2 py-2 rounded-md flex justify-between items-center">
-              <p class="text-sm text-gray-500">তারিখ: <span>${item.date}</span></p>
-            <div>
-              <p class="font-semibold">৳ <span>${item.dueAmount}</span></p>
-            </div>
-          </div>
-        `;
+                    <div class="bg-gray-200/80 shadow px-2 py-2 rounded-sm flex justify-between items-center">
+                        <p class="text-sm text-gray-500">তারিখ: <span>${item.date}</span></p>
+                        <div>
+                            <p class="font-semibold">৳ <span>${item.amount}</span></p>
+                        </div>
+                    </div>
+                `;
 				wrapperDiv.insertAdjacentHTML('beforeend', htmlString);
+
+				totalAmount += item.amount;
 			});
+
+			const totalAmountElement = document.getElementById('totalAmount');
+			totalAmountElement.textContent = totalAmount;
+			console.log(totalAmount)
 		})
 		.catch((error) => {
-			console.log('Error:', error);
+			console.log('Error:',error);
 		});
 }
 
 function getTimePeriod() {
-	const timePeriodButtons = [dayBtn, weekBtn, monthBtn, yearBtn];
+	const timePeriodButtons = [dayBtn, weekBtn, monthBtn, halfYearBtn, yearBtn];
 	for (const button of timePeriodButtons) {
 		if (button.classList.contains('active')) {
 			return button.getAttribute('data-time-period');
