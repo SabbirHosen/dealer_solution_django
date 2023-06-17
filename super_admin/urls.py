@@ -4,5 +4,5 @@ from . import views
 app_name = 'super_admin'
 
 urlpatterns = [
-
+    path('help-support/', views.HelpSupportView.as_view(), name='help-support')
 ]
