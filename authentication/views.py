@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import model_to_dict
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse_lazy
@@ -25,6 +26,8 @@ class UserLogin(View):
             user = authenticate(request, phone=phone, password=password)
             if user:
                 login(request, user=user)
+                if user.is_retailer:
+                    return redirect('retailer:retailer-home')
                 return redirect('dashboard:home')
             else:
                 return render(request, template_name=self.template_name,
@@ -83,6 +86,7 @@ class EditUserProfile(LoginRequiredMixin, View):
     template_name = 'profile.html'
 
     def get(self, request):
+        request.session['previous_page'] = request.META.get('HTTP_REFERER', '/')
         user = request.user
         user_info = UserInformation.objects.filter(user=user).first()
         user_form = UserEditForm(instance=user)
@@ -114,10 +118,11 @@ class EditUserProfile(LoginRequiredMixin, View):
             print('-'*100)
             print(model_to_dict(user_save))
             print(model_to_dict(user_info_save))
-            if user.is_retailer:
-                redirect('retailer:retailer-home')
-            else:
-                return redirect('dashboard:home')
+            return HttpResponseRedirect(request.session['previous_page'])
+            # if user.is_retailer:
+            #     redirect('retailer:retailer-home')
+            # else:
+            #     return redirect('dashboard:home')
         else:
             data = {
                 'forms': [user_form, user_info_form]
@@ -130,6 +135,7 @@ class ResetPin(LoginRequiredMixin, View):
     template_name = 'reset-pin.html'
 
     def get(self, request):
+        request.session['previous_page'] = request.META.get('HTTP_REFERER', '/')
         pin_change_form = PinChangeForm()
         data = {
             'pin_change_form': pin_change_form

@@ -14,7 +14,7 @@ class HelpSupportView(LoginRequiredMixin, View):
 
     def get(self, request):
         help_form = HelpSupportFormUser()
-        request.session['previous'] = request.META.get('HTTP_REFERER', '/')
+        request.session['previous_page'] = request.META.get('HTTP_REFERER', '/')
         # print(request.session['previous'])
         data = {
             'form': help_form
@@ -27,7 +27,7 @@ class HelpSupportView(LoginRequiredMixin, View):
             obj = help_form.save(commit=False)
             obj.user = request.user
             obj.save()
-            return HttpResponseRedirect(request.session['previous'])
+            return HttpResponseRedirect(request.session['previous_page'])
         else:
             data = {
                 'form': help_form

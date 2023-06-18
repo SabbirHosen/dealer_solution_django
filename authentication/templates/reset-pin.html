@@ -14,7 +14,7 @@
 
 <body>
     <nav class="max-w-lg mx-auto px-4 py-2 bg-themeblue">
-        <a href="" class="inline-block">
+        <a href="{{ request.session.previous_page }}" class="inline-block">
             <div
                 class="flex items-center p-2 text-white text-base active:bg-white/20 transition duration-150 ease-in-out">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">

@@ -12,5 +12,7 @@ urlpatterns = [
     path('retailer-business-status/api/<str:status>/<str:time_period>', views.RetailerBusinessStatusData.as_view(), name='retailer-business-status-data-api'),
     path('retailer-collection/', views.RetailerCollection.as_view(), name='retailer-collection'),
     path('retailer-business-status/', views.RetailerBusinessStatus.as_view(), name='retailer-business-status'),
+    path('retailer-privacy-policy/', views.RetailerPrivacyPolicy.as_view(), name='retailer-privacy-policy'),
+    path('retailer-training/', views.RetailerTraining.as_view(), name='retailer-training'),
 
 ]

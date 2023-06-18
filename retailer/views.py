@@ -44,6 +44,19 @@ class RetailerIndex(LoginRequiredMixin, View):
             expenses_obj['paid_amount__sum'] = 0
         data.update(expenses_obj)
         # print(expenses_obj)
+        sell_objs_all = Sell.objects.filter(retailer=request.user)
+        total_sell_all = 0
+        total_due_all = 0
+        for obj in sell_objs_all:
+            total_sell_all += obj.payable_amount
+            total_due_all += obj.get_due
+        expenses_obj_all = Expense.objects.filter(retailer=request.user).aggregate(
+            Sum('paid_amount'))
+        if expenses_obj_all.get('paid_amount__sum') is None:
+            expenses_obj_all['paid_amount__sum'] = 0
+        my_cash = total_sell_all - (total_due_all + expenses_obj_all['paid_amount__sum'])
+        data.update({'my_cash': my_cash})
+        # print(my_cash, total_sell_all, total_due_all, expenses_obj_all['paid_amount__sum'])
         return render(request, self.template_name, context=data)
 
 
@@ -243,16 +256,16 @@ class RetailerBusinessStatusData(LoginRequiredMixin, View):
         if time_period == 'day':
             objects = model_of.objects.filter(retailer=request.user, date=datetime.now().date())
         elif time_period == 'week':
-            objects = model_of.objects.filter(retailer=request.user, date__gte=datetime.now()-timedelta(days=7))
+            objects = model_of.objects.filter(retailer=request.user, date__gte=datetime.now() - timedelta(days=7))
         elif time_period == 'month':
-            objects = model_of.objects.filter(retailer=request.user, date__gte=datetime.now()-timedelta(days=30))
+            objects = model_of.objects.filter(retailer=request.user, date__gte=datetime.now() - timedelta(days=30))
         elif time_period == 'halfYear':
-            objects = model_of.objects.filter(retailer=request.user, date__gte=datetime.now()-timedelta(days=183))
+            objects = model_of.objects.filter(retailer=request.user, date__gte=datetime.now() - timedelta(days=183))
         elif time_period == 'year':
-            objects = model_of.objects.filter(retailer=request.user, date__gte=datetime.now()-timedelta(days=365))
+            objects = model_of.objects.filter(retailer=request.user, date__gte=datetime.now() - timedelta(days=365))
         else:
             objects = model_of.objects.filter(retailer=request.user)
-        # data = []
+        data = []
         if status == 'buy-sell':
             data = []
             key = 1
@@ -296,8 +309,24 @@ class RetailerBusinessStatusData(LoginRequiredMixin, View):
                     total += obj.get_due
                     key += 1
             # data.append({'total': total})
-        print('-'*100)
-        print(status, time_period)
-        print(data)
-        print(objects)
+        # print('-'*100)
+        # print(status, time_period)
+        # print(data)
+        # print(objects)
         return JsonResponse(status=200, data=data, safe=False)
+
+
+class RetailerTraining(LoginRequiredMixin, View):
+    login_url = reverse_lazy('authentication:login')
+    template_name = 'training.html'
+
+    def get(self, request):
+        return render(request, template_name=self.template_name)
+
+
+class RetailerPrivacyPolicy(LoginRequiredMixin, View):
+    login_url = reverse_lazy('authentication:login')
+    template_name = 'privacy-policy.html'
+
+    def get(self, request):
+        return render(request, template_name=self.template_name)
