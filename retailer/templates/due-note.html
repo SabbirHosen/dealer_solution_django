@@ -29,14 +29,14 @@
     <section>
         <div class="space-y-2">
             {% for d in data %}
-            <a href="{% url 'retailer:customer-dues-details' d.id %}"
+            <a href="{% url 'retailer:customer-dues-details' d.phone %}"
                 class="bg-gray-200/80 shadow px-2 py-2 rounded-md flex justify-between items-center">
                 <div>
-                    <p>{{ d.customer_name }}</p>
-                    <p class="text-sm text-gray-500">মোবাইল: <span>{{ d.customer_number }}</span></p>
+                    <p>{{ d.name }}</p>
+                    <p class="text-sm text-gray-500">মোবাইল: <span>{{ d.phone }}</span></p>
                 </div>
                 <div>
-                    <p class="font-semibold">৳ <span>{{ d.get_due  }}</span></p>
+                    <p class="font-semibold">৳ <span>{{ d.due_amount  }}</span></p>
                 </div>
             </a>
             {% endfor %}

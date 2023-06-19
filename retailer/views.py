@@ -127,16 +127,36 @@ class RetailerDues(View):
 
     def get(self, request):
         dues_obj = Sell.objects.filter(date=datetime.now().date(), retailer=request.user)
+        unique_numbers = Sell.objects.filter(date=datetime.now().date(), retailer=request.user).values('customer_number', 'customer_name').distinct()
         dues_objs_greater_zero = [due for due in dues_obj if due.get_due > 0]
-        return render(request=request, template_name=self.template_name, context={'data': dues_objs_greater_zero})
+        data = []
+        key = 1
+        # print(distinct_phone)
+        for phone in unique_numbers:
+            # print(phone)
+            if phone.get('customer_number') != '':
+                due = 0
+                sell_obj = Sell.objects.filter(retailer=request.user, customer_number=phone.get('customer_number'))
+                for obj in sell_obj:
+                    due += obj.get_due
+                temp = {
+                    "name": str(phone.get('customer_name')),
+                    "phone": str(phone.get('customer_number')),
+                    "due_amount": due
+                }
+                # print(temp)
+                key += 1
+                data.append(temp)
+        # print(data)
+        return render(request=request, template_name=self.template_name, context={'data': data})
 
 
 class CustomerDuesDetails(View):
     template_name = 'due-profile.html'
 
     def get(self, request, expense_id):
-        sell_obj = Sell.objects.filter(id=expense_id).first()
-        all_sell_obj = Sell.objects.filter(customer_number=sell_obj.customer_number)
+        sell_obj = Sell.objects.filter(customer_number=expense_id).first()
+        all_sell_obj = Sell.objects.filter(customer_number=expense_id, date=datetime.now().date())
         total = 0
         individual_dues = [due for due in all_sell_obj if due.get_due > 0]
         for due in individual_dues:

@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 
 # Create your views here.
 
-class Dashboard(View, LoginRequiredMixin):
+class Dashboard(LoginRequiredMixin, View):
     login_url = reverse_lazy('authentication:login')
     template_name = 'index.html'
 
