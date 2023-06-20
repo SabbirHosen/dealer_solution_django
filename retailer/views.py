@@ -126,8 +126,9 @@ class RetailerDues(View):
     template_name = 'due-note.html'
 
     def get(self, request):
-        dues_obj = Sell.objects.filter(date=datetime.now().date(), retailer=request.user)
-        unique_numbers = Sell.objects.filter(date=datetime.now().date(), retailer=request.user).values('customer_number', 'customer_name').distinct()
+        dues_obj = Sell.objects.filter(retailer=request.user)
+        unique_numbers = Sell.objects.filter(retailer=request.user).values('customer_number',
+                                                                           'customer_name').distinct()
         dues_objs_greater_zero = [due for due in dues_obj if due.get_due > 0]
         data = []
         key = 1
@@ -139,14 +140,16 @@ class RetailerDues(View):
                 sell_obj = Sell.objects.filter(retailer=request.user, customer_number=phone.get('customer_number'))
                 for obj in sell_obj:
                     due += obj.get_due
-                temp = {
-                    "name": str(phone.get('customer_name')),
-                    "phone": str(phone.get('customer_number')),
-                    "due_amount": due
-                }
+                if due > 0:
+                    temp = {
+                        "name": str(phone.get('customer_name')),
+                        "phone": str(phone.get('customer_number')),
+                        "due_amount": due
+                    }
+                    data.append(temp)
                 # print(temp)
                 key += 1
-                data.append(temp)
+
         # print(data)
         return render(request=request, template_name=self.template_name, context={'data': data})
 
@@ -154,14 +157,15 @@ class RetailerDues(View):
 class CustomerDuesDetails(View):
     template_name = 'due-profile.html'
 
-    def get(self, request, expense_id):
-        sell_obj = Sell.objects.filter(customer_number=expense_id).first()
-        all_sell_obj = Sell.objects.filter(customer_number=expense_id, date=datetime.now().date())
+    def get(self, request, phone):
+        sell_obj = Sell.objects.filter(customer_number=phone).first()
+        all_sell_obj = Sell.objects.filter(customer_number=phone)
         total = 0
         individual_dues = [due for due in all_sell_obj if due.get_due > 0]
         for due in individual_dues:
             total += due.get_due
         data = {
+            'phone': sell_obj.customer_number,
             'name': sell_obj.customer_name,
             'number': sell_obj.customer_number,
             'dues': individual_dues,
@@ -201,7 +205,10 @@ class RetailerCollection(LoginRequiredMixin, View):
     template_name = 'collection.html'
 
     def get(self, request):
-        return render(request=request, template_name=self.template_name)
+        data = {
+            'show_suggestions': True,
+        }
+        return render(request=request, template_name=self.template_name, context=data)
 
     def post(self, request):
         date_input = request.POST.get('datePicker')
@@ -350,3 +357,32 @@ class RetailerPrivacyPolicy(LoginRequiredMixin, View):
 
     def get(self, request):
         return render(request, template_name=self.template_name)
+
+
+class RetailerCollectionFromDues(LoginRequiredMixin, View):
+    login_url = reverse_lazy('authentication:login')
+    template_name = 'collection.html'
+
+    def get(self, request, phone):
+        due = 0
+        sell_obj = Sell.objects.filter(retailer=request.user, customer_number=phone)
+        name = sell_obj.first().customer_name
+        for obj in sell_obj:
+            due += obj.get_due
+        # temp = {
+        #     "key": key,
+        #     "name": str(phone.get('customer_name')),
+        #     "phone": str(phone.get('customer_number')),
+        #     "dueAmount": due
+        # }
+        data = {
+            'phone': phone,
+            'name': name,
+            'cash_due': due,
+            'show_suggestions': False,
+        }
+        print(data)
+        return render(request=request, template_name=self.template_name, context=data)
+
+    def post(self, request, phone):
+        return RetailerCollection().post(request)
