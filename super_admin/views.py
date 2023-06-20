@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
-from  .models import HelpSupport
+from .models import HelpSupport
 from .forms import HelpSupportFormUser
 
 
@@ -33,3 +33,16 @@ class HelpSupportView(LoginRequiredMixin, View):
                 'form': help_form
             }
             return render(request, template_name=self.template_name, context=data)
+
+
+class HelpSupportListView(LoginRequiredMixin, View):
+    login_url = reverse_lazy('authentication:login')
+    template_name = 'support-list.html'
+
+    def get(self, request):
+        request.session['previous_page'] = request.META.get('HTTP_REFERER', '/')
+        support_obj = HelpSupport.objects.filter(user=request.user).order_by('-created_at')
+        data = {
+            'supports': support_obj
+        }
+        return render(request=request, template_name=self.template_name, context=data)

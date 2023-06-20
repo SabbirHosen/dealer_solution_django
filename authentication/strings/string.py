@@ -5,7 +5,6 @@ SET_ROLE_CHOICES = (
 
 
 SET_HELP_SUPPORT_STATUS = (
-    ('UN', 'Unprocessed'),
     ('PR', 'Processing'),
     ('DN', 'Done')
 )

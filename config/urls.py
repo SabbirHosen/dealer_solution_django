@@ -24,5 +24,5 @@ urlpatterns = [
     path('auth/', include('authentication.urls', namespace='authentication')),
     path('', include('dashboard.urls', namespace='dashboard')),
     path('retailer/', include('retailer.urls', namespace='retailer')),
-    path('super-admin/', include('super_admin.urls', namespace='super-admin')),
+    path('super-admin/', include('super_admin.urls', namespace='super_admin')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

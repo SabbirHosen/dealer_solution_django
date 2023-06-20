@@ -14,58 +14,60 @@
 </head>
 
 <body>
-    <section>
-        <div class="flex flex-col items-center justify-center mx-auto">
-            <img class="mb-6 mt-4" src="{% static 'assets/img/inventory.png' %}" alt="logo">
-            <div class="space-y-4 w-full">
-                <h1 class="text-2xl font-bold leading-tight tracking-tight text-gray-900 py-3">
-                    লগ-ইন করুন
-                </h1>
-                <form action="" class="space-y-4 md:space-y-6" method="post">
-                    {% csrf_token %}
-                    {% for field in login_form %}
+<section>
+    <div class="flex flex-col items-center justify-center mx-auto">
+        <img class="mb-6 mt-4" src="{% static 'assets/img/inventory.png' %}" alt="logo">
+        <div class="space-y-4 w-full">
+            <h1 class="text-2xl font-bold leading-tight tracking-tight text-gray-900 py-3">
+                লগ-ইন করুন
+            </h1>
+            <form action="" class="space-y-4 md:space-y-6" method="post">
+                {% csrf_token %}
+                {% for field in login_form %}
                     <div>
                         <label for="{{ field.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-900">
                             {{ field.label }}</label>
                         {{ field }}
                     </div>
-                    {% endfor %}
-{#                    <div>#}
-{#                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900">পাসওয়ার্ড</label>#}
-{#                        <input type="password" inputmode="numeric" name="password" id="password" placeholder="••••••••"#}
-{#                            class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 font-medium"#}
-{#                            required="">#}
-{#                    </div>#}
-                    <!-- <div class="flex items-center justify-between">
-                            <div class="flex items-start">
-                                <div class="flex items-center h-5">
-                                    <input id="remember" aria-describedby="remember" type="checkbox"
-                                        class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"
-                                        required="">
-                                </div>
-                                <div class="ml-3 text-sm">
-                                    <label for="remember" class="text-gray-500">Remember me</label>
-                                </div>
+                {% endfor %}
+                {#                    <div>#}
+                {#                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900">পাসওয়ার্ড</label>#}
+                {#                        <input type="password" inputmode="numeric" name="password" id="password" placeholder="••••••••"#}
+                {#                            class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 font-medium"#}
+                {#                            required="">#}
+                {#                    </div>#}
+                <!-- <div class="flex items-center justify-between">
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="remember" aria-describedby="remember" type="checkbox"
+                                    class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"
+                                    required="">
                             </div>
-                            <a href="#" class="text-sm font-medium text-blue-600 hover:underline">Forgot
-                                password?</a>
-                        </div> -->
-                    <button type="submit"
+                            <div class="ml-3 text-sm">
+                                <label for="remember" class="text-gray-500">Remember me</label>
+                            </div>
+                        </div>
+                        <a href="#" class="text-sm font-medium text-blue-600 hover:underline">Forgot
+                            password?</a>
+                    </div> -->
+                <button type="submit"
                         class="w-full text-white bg-themeblue hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-md px-5 py-3 text-center">
-                        এগিয়ে যান</button>
-                    <p class="text-gray-500 font-medium text-sm text-center py-3">নতুন একাউন্ট খুলতে এডমিনের সাথে
-                        যোগাযোগ করুন।
+                    এগিয়ে যান
+                </button>
+                <a href="./signup.html">
+                    <p class="text-gray-500 font-medium text-sm text-right py-3">নতুন একাউন্ট খুলুন
                     </p>
+                </a>
 
-                    <div class="flex justify-between items-center font-medium text-themeblue/75 text-sm">
-                        <p>শর্তসমূহ</p>
-                        <p>প্রাইভেসি পলিসি</p>
-                        <p>যোগাযোগ করুন</p>
-                    </div>
-                </form>
-            </div>
+                {#                    <div class="flex justify-between items-center font-medium text-themeblue/75 text-sm">#}
+                {#                        <p>শর্তসমূহ</p>#}
+                {#                        <p>প্রাইভেসি পলিসি</p>#}
+                {#                        <p>যোগাযোগ করুন</p>#}
+                {#                    </div>#}
+            </form>
         </div>
-    </section>
+    </div>
+</section>
 </body>
 
 </html>

@@ -13,27 +13,19 @@
 </head>
 
 <body>
-    <nav class="max-w-lg mx-auto px-4 py-2 bg-themeblue">
-        <a href="{% url 'retailer:retailer-dues' %}" class=" flex items-center">
-            <div class="p-2 text-white text-base active:bg-white/20 transition duration-150 ease-in-out">
+    <nav class="max-w-lg mx-auto px-4 py-2 bg-themeblue sticky top-0 z-10 flex justify-between items-center">
+        <a href="{% url 'retailer:retailer-home' %}" class="inline-block">
+            <div
+                class="flex items-center p-2 text-white text-base active:bg-white/20 transition duration-150 ease-in-out">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
                     <path fill-rule="evenodd"
                         d="M11.03 3.97a.75.75 0 010 1.06l-6.22 6.22H21a.75.75 0 010 1.5H4.81l6.22 6.22a.75.75 0 11-1.06 1.06l-7.5-7.5a.75.75 0 010-1.06l7.5-7.5a.75.75 0 011.06 0z"
                         clip-rule="evenodd" />
                 </svg>
                 <span class="ml-1 font-medium text-lg">{{ name }}</span>
+            </div>
         </a>
-        </div>
-        <a href="{% url 'retailer:retailer-collection-from-dues' phone %}" class=" flex items-center">
-            <div class="p-2 text-white text-base active:bg-white/20 transition duration-150 ease-in-out">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                    <path fill-rule="evenodd"
-                        d="M11.03 3.97a.75.75 0 010 1.06l-6.22 6.22H21a.75.75 0 010 1.5H4.81l6.22 6.22a.75.75 0 11-1.06 1.06l-7.5-7.5a.75.75 0 010-1.06l7.5-7.5a.75.75 0 011.06 0z"
-                        clip-rule="evenodd" />
-                </svg>
-                <span class="ml-1 font-medium text-lg">কালেকশন</span>
-        </a>
-        </div>
+        <a href="{% url 'retailer:retailer-collection-from-dues' phone %}" class="px-2 py-1 rounded-md bg-white text-slate-900">কালেকশন</a>
     </nav>
 
     <section>
