@@ -35,8 +35,10 @@
             {% for field in form %}
                 <div class="relative float-label-input w-full">
                     {{ field }}
+                    {% if field.id_for_label != 'id_user_role' %}
                     <label
                             class="absolute top-3 left-0 text-gray-400 pointer-events-none transition duration-200 ease-in-outbg-white px-2 text-grey-darker">{{ field.label }}</label>
+                    {% endif %}
                 </div>
             {% endfor %}
         {% endfor %}
@@ -77,6 +79,23 @@
         displayText.textContent = fileName ? "Image Selected" : "Choose File";
     }
 </script>
+<script src="{% static 'assets/js/toastify.js' %}"></script>
+{% if messages %}
+    {% for message in messages %}
+
+        <script>
+            // Toast config
+            const toastConfig = {
+                text: '',
+                duration: 2500,
+                newWindow: true,
+                gravity: 'top',
+                position: 'center',
+            };
+            Toastify({...toastConfig, text: '{{ message }}', style: { background: '{{ message.tags }}' } }).showToast(); //#f43f5e
+        </script>
+    {% endfor %}
+{% endif %}
 </body>
 
 </html>

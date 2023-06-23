@@ -38,23 +38,25 @@
         </div>
         <div class="relative my-4 flex items-center justify-between gap-3">
             <div class="relative float-label-input w-full">
-                <input type="tel" id="numberInput" oninput="showSuggestions()" name="mobileNumber" placeholder=" " value="{{ phone }}"
+                <input type="tel" id="numberInput" oninput="showSuggestions()" name="mobileNumber" placeholder=" "
+                       value="{{ phone }}"
                        required
                        class="w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2">
                 <label
                         class="absolute top-3 left-0 text-gray-400 pointer-events-none transition duration-200 ease-in-outbg-white px-2 text-grey-darker">মোবাইল
                     নম্বর</label>
                 {% if show_suggestions %}
-                <ul id="suggestionsList"
-                    class="absolute z-10 top-14 bg-white px-2 rounded-md shadow max-h-36 w-full overflow-y-auto">
-                </ul>
+                    <ul id="suggestionsList"
+                        class="absolute z-10 top-14 bg-white px-2 rounded-md shadow max-h-36 w-full overflow-y-auto">
+                    </ul>
                 {% endif %}
             </div>
         </div>
 
 
         <div class="relative float-label-input">
-            <input id="customerName" type="text" name="customerName" placeholder=" " readonly required value="{{ name }}"
+            <input id="customerName" type="text" name="customerName" placeholder=" " readonly required
+                   value="{{ name }}"
                    class="w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2">
             <label
                     class="absolute top-3 left-0 text-gray-400 pointer-events-none transition duration-200 ease-in-outbg-white px-2 text-grey-darker">নাম</label>
@@ -62,7 +64,8 @@
 
         <div class="my-4 flex items-center justify-between gap-3">
             <div class="relative float-label-input w-full">
-                <input type="number" id="dueAmountField" name="cashDue" placeholder=" " required readonly value="{{ cash_due }}"
+                <input type="number" id="dueAmountField" name="cashDue" placeholder=" " required readonly
+                       value="{{ cash_due }}"
                        class="w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2">
                 <label
                         class="absolute top-3 left-0 text-gray-400 pointer-events-none transition duration-200 ease-in-outbg-white px-2 text-grey-darker">বাকি
@@ -88,7 +91,8 @@
 
         <div class="my-4 flex items-center justify-between gap-3">
             <div class="relative float-label-input w-2/3">
-                <input type="number" id="cashField" placeholder=" " name="cashReceived" required value="{{ cash_received }}"
+                <input type="number" id="cashField" placeholder=" " name="cashReceived" required
+                       value="{{ cash_received }}"
                        class="w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2">
                 <label
                         class="absolute top-3 left-0 text-gray-400 pointer-events-none transition duration-200 ease-in-outbg-white px-2 text-grey-darker">
@@ -110,8 +114,24 @@
     </form>
 </section>
 
-<script type="text/javascript" src="{% static 'assets/js/toastify.js' %}"></script>
 <script src="{% static 'assets/js/collection.js' %}"></script>
+<script src="{% static 'assets/js/toastify.js' %}"></script>
+{% if messages %}
+    {% for message in messages %}
+
+        <script>
+            // Toast config
+            const toastConfig = {
+                text: '',
+                duration: 2500,
+                newWindow: true,
+                gravity: 'top',
+                position: 'center',
+            };
+            Toastify({...toastConfig, text: '{{ message }}', style: {background: '{{ message.tags }}'}}).showToast(); //#f43f5e
+        </script>
+    {% endfor %}
+{% endif %}
 </body>
 
 </html>

@@ -68,6 +68,23 @@
         </div>
     </div>
 </section>
+<script src="{% static 'assets/js/toastify.js' %}"></script>
+{% if messages %}
+    {% for message in messages %}
+
+        <script>
+            // Toast config
+            const toastConfig = {
+                text: '',
+                duration: 2500,
+                newWindow: true,
+                gravity: 'top',
+                position: 'center',
+            };
+            Toastify({...toastConfig, text: '{{ message }}', style: { background: '{{ message.tags }}' } }).showToast(); //#f43f5e
+        </script>
+    {% endfor %}
+{% endif %}
 </body>
 
 </html>

@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -28,11 +29,13 @@ class HelpSupportView(LoginRequiredMixin, View):
             obj = help_form.save(commit=False)
             obj.user = request.user
             obj.save()
+            messages.success(request, 'সাপোর্ট তৈরি হয়েছে।')
             return HttpResponseRedirect(request.session['previous_page'])
         else:
             data = {
                 'form': help_form
             }
+            messages.error(request, 'সঠিক তথ্য দিন।')
             return render(request, template_name=self.template_name, context=data)
 
 

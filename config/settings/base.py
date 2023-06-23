@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from datetime import timedelta
+from django.contrib.messages import constants as messages
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -16,7 +17,7 @@ SECRET_KEY = 'django-insecure-bw%8d=uy!d=6uzc=-ctc$c$!q^$z+mxc%f5r0%=1g!378m6a((
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS')
 
 # Application definition
 
@@ -129,3 +130,11 @@ ACCOUNT_UNIQUE_EMAIL = False
 ACCOUNT_AUTHENTICATION_METHOD = 'phone'
 
 LOGIN_URL = 'auth/login/'
+
+MESSAGE_TAGS = {
+        messages.DEBUG: 'alert-secondary',
+        messages.INFO: 'alert-info',
+        messages.SUCCESS: '#26af61',
+        messages.WARNING: 'alert-warning',
+        messages.ERROR: '#f43f5e',
+}

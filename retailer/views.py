@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-
+from django.contrib import messages
 from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -73,10 +73,12 @@ class BuySell(View):
         customer_name_input = request.POST.get('customerName')
         customer_phone_input = request.POST.get('mobileNumber')
 
-        print('-' * 100)
-        print()
-        print(date_input, paid_amount_input, payable_amount_input, customer_name_input, customer_phone_input)
+        # print('-' * 100)
+        # print()
+        # print(date_input, paid_amount_input, payable_amount_input, customer_name_input, customer_phone_input)
         try:
+            if '+88' not in customer_phone_input:
+                phone_input = '+88' + customer_phone_input
             validate_international_phonenumber(customer_phone_input)
             obj = Sell.objects.create(date=date_input,
                                       payable_amount=payable_amount_input,
@@ -85,13 +87,15 @@ class BuySell(View):
                                       customer_number=customer_phone_input,
                                       retailer=request.user)
             obj.save()
-            print(obj)
+            # print(obj)
+            messages.success(request, 'বিক্রি সফল হয়েছে !')
         except:
-            data = {
-                'Phone': 'Enter a valid phone number'
-            }
-            print(data)
-            return render(request, template_name=self.template_name, context=data)
+            # data = {
+            #     'Phone': 'Enter a valid phone number'
+            # }
+            # print(data)
+            messages.error(request, '%s সঠিক নাম্বার দিন' % customer_phone_input)
+            return render(request, template_name=self.template_name)
 
         return redirect('retailer:retailer-home')
 
@@ -110,7 +114,7 @@ class RetailerExpense(View):
         date_input = request.POST.get('datePicker')
         comments_input = request.POST.get('comment')
         expense_obj = ExpenseName.objects.filter(id=type_of_expense).first()
-        print(image_input)
+        # print(image_input)
         obj = Expense.objects.create(image=image_input,
                                      name=expense_obj,
                                      paid_amount=paid_amount_input,
@@ -118,7 +122,8 @@ class RetailerExpense(View):
                                      comments=comments_input,
                                      retailer=request.user)
         obj.save()
-        print(obj)
+        # print(obj)
+        messages.success(request, 'খরচ সফলভাবে অ্যাড হয়েছে !')
         return redirect('retailer:retailer-home')
 
 
@@ -245,6 +250,7 @@ class RetailerCollection(LoginRequiredMixin, View):
 
             # print(collection_obj)
             collection_obj.save()
+            messages.success(request, 'কালেকশন সফল হয়েছে !')
         else:
             data = {
                 'date': date_input,
@@ -254,6 +260,7 @@ class RetailerCollection(LoginRequiredMixin, View):
                 'cash_received': paid_amount_input,
                 'message': 'Customer is not exist on the phone number',
             }
+            messages.error(request, 'সঠিক তথ্য দিন।')
             return render(request=request, template_name=self.template_name, context=data)
 
         return redirect('retailer:retailer-home')
@@ -381,7 +388,7 @@ class RetailerCollectionFromDues(LoginRequiredMixin, View):
             'cash_due': due,
             'show_suggestions': False,
         }
-        print(data)
+        # print(data)
         return render(request=request, template_name=self.template_name, context=data)
 
     def post(self, request, phone):

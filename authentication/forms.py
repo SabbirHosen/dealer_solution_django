@@ -52,7 +52,8 @@ class UserLogin(forms.Form):
 class UserSignupForm(forms.ModelForm):
     user_role = forms.ChoiceField(choices=SET_ROLE_CHOICES,
                                   required=True,
-                                  label=_('ব্যবহারকারীর ভূমিকা'))
+                                  label=_('ব্যবহারকারীর ভূমিকা'),
+                                  widget=forms.Select(attrs={'class': 'w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2'}))
 
     class Meta:
         model = CustomUser
@@ -63,6 +64,19 @@ class UserSignupForm(forms.ModelForm):
             'last_name': _('শেষ নাম'),
             'email': _('ইমেইল'),
             'password': _('পাসওয়ার্ড')
+        }
+        widgets = {
+            'phone': RegionalPhoneNumberWidget(attrs={
+                'class': 'w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2'}),
+            'first_name': forms.TextInput(attrs={
+                'class': 'w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2'}),
+            'last_name': forms.TextInput(attrs={
+                'class': 'w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2'}),
+            'email': forms.EmailInput(attrs={
+                'class': 'w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2'}),
+            'password': forms.PasswordInput(attrs={
+                'class': 'w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2'}),
+
         }
 
     def save(self, commit=True):
