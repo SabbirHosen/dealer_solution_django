@@ -1,0 +1,46 @@
+{% load static %}
+<!doctype html>
+<html lang="bn">
+
+<head>
+    {% include 'layout/components/head.html' %}
+    {% include 'layout/components/css_scripts.html' %}
+
+    {% block custom_css %}
+    {% endblock %}
+    <title>{% block title %} Dealer Solutions{% endblock %}</title>
+</head>
+
+<body>
+<div class="drawer drawer-end">
+    <input id="sidebar" type="checkbox" class="drawer-toggle"/>
+    <div class="drawer-content">
+
+        <!-- Connectivity notification -->
+        <div id="toastContainer"
+             class="hidden top-8 left-1/2 transform -translate-x-2/4 -translate-y-2/4 max-w-lg fixed bg-rose-500 text-white font-medium w-full z-20 shadow-lg px-4 py-8 pointer-events-none">
+            ইন্টারনেট অন করে আবার চেষ্টা করুন
+        </div>
+
+        <!-- Page content start -->
+        {% block nav_bar %}
+        {% endblock %}
+
+        {% block main_content %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'layout/components/footer.html' %}
+        {% endblock %}
+        <!-- Page content end -->
+    </div>
+    {% block sidebar %}
+        {% include 'layout/components/sidebar.html' %}
+    {% endblock %}
+</div>
+
+{% include 'layout/components/js_scripts.html' %}
+{% block custom_js %}
+{% endblock %}
+</body>
+
+</html>

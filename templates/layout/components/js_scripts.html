@@ -1,0 +1,11 @@
+{% load static %}
+<script type="text/javascript" src="{% static 'assets/js/toastify.js' %}"></script>
+<script src="{% static 'assets/js/app.js' %}"></script>
+{% if messages %}
+    {% for message in messages %}
+
+        <script>
+            Toastify({...toastConfig, text: '{{ message }}', style: {background: '{{ message.tags }}'}}).showToast(); //#f43f5e
+        </script>
+    {% endfor %}
+{% endif %}

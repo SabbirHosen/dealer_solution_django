@@ -1,0 +1,71 @@
+{% load static %}
+<!doctype html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="google" content="notranslate">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+    <title>Password Reset</title>
+</head>
+
+<body>
+<nav class="max-w-lg mx-auto px-4 py-2 bg-themeblue">
+    <a href="{{ request.session.previous_page }}" class="inline-block">
+        <div
+                class="flex items-center p-2 text-white text-base active:bg-white/20 transition duration-150 ease-in-out">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                <path fill-rule="evenodd"
+                      d="M11.03 3.97a.75.75 0 010 1.06l-6.22 6.22H21a.75.75 0 010 1.5H4.81l6.22 6.22a.75.75 0 11-1.06 1.06l-7.5-7.5a.75.75 0 010-1.06l7.5-7.5a.75.75 0 011.06 0z"
+                      clip-rule="evenodd"/>
+            </svg>
+            <span class="ml-1 font-medium text-lg">পিন পরিবর্তন</span>
+        </div>
+    </a>
+    </div>
+</nav>
+
+<section>
+    <form action="" id="pageForm" method="post">
+        {% csrf_token %}
+        {% for field in pin_change_form %}
+            <div class="my-4">
+                <label class="block mb-2 text-sm font-medium text-gray-900">
+                    {{ field.label }}</label>
+                {{ field }}
+            </div>
+        {% endfor %}
+        {#            {% for message in messages %}#}
+        {#            <span class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">#}
+        {#                    {{ message }}#}
+        {#                </span>#}
+{#        {% endfor %}#}
+        {#            <div class="my-4">#}
+        {#                <label class="block mb-2 text-sm font-medium text-gray-900">নতুন পিন</label>#}
+        {#                <input type="password" inputmode="numeric" name="password" id="password" placeholder="****"#}
+        {#                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 font-medium"#}
+        {#                    required="">#}
+        {#            </div>#}
+        <button type="submit"
+                class="w-full text-white bg-themeblue hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-md px-5 py-3 text-center">
+            এগিয়ে যান
+        </button>
+    </form>
+</section>
+
+<script type="text/javascript" src="{% static 'assets/js/toastify.js' %}"></script>
+<script src="{% static 'assets/js/app.js' %}"></script>
+{% if messages %}
+    {% for message in messages %}
+
+        <script>
+            Toastify({...toastConfig, text: '{{ message }}', style: {background: '{{ message.tags }}'}}).showToast(); //#f43f5e
+        </script>
+    {% endfor %}
+{% endif %}
+</body>
+
+</html>

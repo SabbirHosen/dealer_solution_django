@@ -1,0 +1,89 @@
+{% load static %}
+<!doctype html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="google" content="notranslate">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+    <title>Dealer Solutions</title>
+</head>
+
+<body>
+<nav class="max-w-lg mx-auto px-4 py-2 bg-themeblue sticky top-0 z-10 flex justify-between items-center">
+    <a href="{% url 'retailer:retailer-home' %}" class="inline-block">
+        <div
+                class="flex items-center p-2 text-white text-base active:bg-white/20 transition duration-150 ease-in-out">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                <path fill-rule="evenodd"
+                      d="M11.03 3.97a.75.75 0 010 1.06l-6.22 6.22H21a.75.75 0 010 1.5H4.81l6.22 6.22a.75.75 0 11-1.06 1.06l-7.5-7.5a.75.75 0 010-1.06l7.5-7.5a.75.75 0 011.06 0z"
+                      clip-rule="evenodd"/>
+            </svg>
+            <span class="ml-1 font-medium text-lg">{{ name }}</span>
+        </div>
+    </a>
+    <a href="{% url 'retailer:retailer-collection-from-dues' phone %}"
+       class="px-2 py-1 rounded-md bg-white text-slate-900">কালেকশন</a>
+</nav>
+
+<section>
+
+    <h2 class="text-center text-lg font-medium">{{ name }}</h2>
+    <p class="text-bases text-gray-500 text-center mb-3">মোবাইল: <a href="tel:{{ number }}">{{ number }}</a>
+    </p>
+
+    <div class="overflow-x-auto">
+        <table class="table w-full">
+            <thead>
+            <tr>
+                <th></th>
+                <th>তারিখ</th>
+                <th>বাকি আছে</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for d in dues %}
+                <tr>
+                    <th>{{ forloop.counter }}</th>
+                    <td>{{ d.date }}</td>
+                    <td>{{ d.get_due }} <span>টাকা</span></td>
+                </tr>
+            {% endfor %}
+            {#                    <tr>#}
+            {#                        <th>2</th>#}
+            {#                        <td>02/06/2023</td>#}
+            {#                        <td>740 <span>টাকা</span></td>#}
+            {#                    </tr>#}
+            {##}
+            {#                    <tr>#}
+            {#                        <th>3</th>#}
+            {#                        <td>03/06/2023</td>#}
+            {#                        <td>284 <span>টাকা</span></td>#}
+            {#                    </tr>#}
+            </tbody>
+        </table>
+    </div>
+    <div class="flex justify-between px-10 text-lg font-medium">
+        <p>সর্বমোট:</p>
+        <p>{{ total }} <span>টাকা</span></p>
+    </div>
+
+</section>
+
+<script src="{% static 'assets/js/app.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/js/toastify.js' %}"></script>
+{% if messages %}
+    {% for message in messages %}
+
+        <script>
+            Toastify({...toastConfig, text: '{{ message }}', style: {background: '{{ message.tags }}'}}).showToast(); //#f43f5e
+        </script>
+    {% endfor %}
+{% endif %}
+</body>
+
+</html>
