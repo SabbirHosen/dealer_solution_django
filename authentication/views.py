@@ -3,7 +3,7 @@ from django.forms import model_to_dict
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views import View
 from . import forms
 from .models import CustomUser, UserInformation
@@ -28,6 +28,8 @@ class UserLogin(View):
             if user:
                 login(request, user=user)
                 if user.is_retailer:
+                    home_url = reverse('retailer:retailer-home')
+                    request.session['home_url'] = home_url
                     return redirect('retailer:retailer-home')
                 return redirect('dashboard:home')
             else:

@@ -10,54 +10,55 @@ from authentication.models import CustomUser, UserInformation
 from phonenumber_field.validators import validate_international_phonenumber
 from .models import Sell, Expense, CashCollection
 from super_admin.models import ExpenseName
+from authentication.mixins import RetailerRequiredMixin
 
 
 # Create your views here.
-class RetailerIndex(LoginRequiredMixin, View):
+class RetailerIndex(LoginRequiredMixin, RetailerRequiredMixin, View):
     login_url = reverse_lazy('authentication:login')
     template_name = 'retailer.html'
 
     def get(self, request):
-        # print(request.user)
-        user_info = UserInformation.objects.filter(user=request.user).first()
-        # print(user_info)
-        # print(datetime.now().date())
-        sell_objs_today = Sell.objects.filter(date=datetime.now().date(), retailer=request.user)
-        total_sell = 0
-        total_due = 0
-        for obj in sell_objs_today:
-            total_sell += obj.payable_amount
-            total_due += obj.get_due
-
-        data = {
-            'name': user_info.user.get_full_name(),
-            'shop_name': user_info.shop_name,
-            'phone': user_info.user.phone,
-            'image': user_info.photo.url,
-            'account': 'Retailer',
-            'total_sell': total_sell,
-            'total_due': total_due,
-        }
-        expenses_obj = Expense.objects.filter(date=datetime.now().date(), retailer=request.user).aggregate(
-            Sum('paid_amount'))
-        if expenses_obj.get('paid_amount__sum') is None:
-            expenses_obj['paid_amount__sum'] = 0
-        data.update(expenses_obj)
-        # print(expenses_obj)
-        sell_objs_all = Sell.objects.filter(retailer=request.user)
-        total_sell_all = 0
-        total_due_all = 0
-        for obj in sell_objs_all:
-            total_sell_all += obj.payable_amount
-            total_due_all += obj.get_due
-        expenses_obj_all = Expense.objects.filter(retailer=request.user).aggregate(
-            Sum('paid_amount'))
-        if expenses_obj_all.get('paid_amount__sum') is None:
-            expenses_obj_all['paid_amount__sum'] = 0
-        my_cash = total_sell_all - (total_due_all + expenses_obj_all['paid_amount__sum'])
-        data.update({'my_cash': my_cash})
-        # print(my_cash, total_sell_all, total_due_all, expenses_obj_all['paid_amount__sum'])
-        return render(request, self.template_name, context=data)
+        # # print(request.user)
+        # user_info = UserInformation.objects.filter(user=request.user).first()
+        # # print(user_info)
+        # # print(datetime.now().date())
+        # sell_objs_today = Sell.objects.filter(date=datetime.now().date(), retailer=request.user)
+        # total_sell = 0
+        # total_due = 0
+        # for obj in sell_objs_today:
+        #     total_sell += obj.payable_amount
+        #     total_due += obj.get_due
+        #
+        # data = {
+        #     'name': user_info.user.get_full_name(),
+        #     'shop_name': user_info.shop_name,
+        #     'phone': user_info.user.phone,
+        #     'image': user_info.photo.url,
+        #     'account': 'Retailer',
+        #     'total_sell': total_sell,
+        #     'total_due': total_due,
+        # }
+        # expenses_obj = Expense.objects.filter(date=datetime.now().date(), retailer=request.user).aggregate(
+        #     Sum('paid_amount'))
+        # if expenses_obj.get('paid_amount__sum') is None:
+        #     expenses_obj['paid_amount__sum'] = 0
+        # data.update(expenses_obj)
+        # # print(expenses_obj)
+        # sell_objs_all = Sell.objects.filter(retailer=request.user)
+        # total_sell_all = 0
+        # total_due_all = 0
+        # for obj in sell_objs_all:
+        #     total_sell_all += obj.payable_amount
+        #     total_due_all += obj.get_due
+        # expenses_obj_all = Expense.objects.filter(retailer=request.user).aggregate(
+        #     Sum('paid_amount'))
+        # if expenses_obj_all.get('paid_amount__sum') is None:
+        #     expenses_obj_all['paid_amount__sum'] = 0
+        # my_cash = total_sell_all - (total_due_all + expenses_obj_all['paid_amount__sum'])
+        # data.update({'my_cash': my_cash})
+        # # print(my_cash, total_sell_all, total_due_all, expenses_obj_all['paid_amount__sum'])
+        return render(request, self.template_name)
 
 
 class BuySell(View):
