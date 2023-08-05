@@ -1,13 +1,14 @@
 from django import forms
 from .models import CustomUser, UserInformation
 from django.utils.translation import gettext as _
-from phonenumber_field.widgets import RegionalPhoneNumberWidget
+from phonenumber_field.widgets import RegionalPhoneNumberWidget, PhoneNumberPrefixWidget
 from phonenumber_field.formfields import PhoneNumberField
 from .strings.string import SET_ROLE_CHOICES
+from phonenumber_field.phonenumber import PhoneNumber
 
 
 class UserLogin(forms.Form):
-    phone = PhoneNumberField(widget=RegionalPhoneNumberWidget(attrs={'class': 'bg-gray-50 border border-gray-300 '
+    phone = PhoneNumberField(widget=PhoneNumberPrefixWidget(attrs={'class': 'bg-gray-50 border border-gray-300 '
                                                                               'text-gray-900 sm:text-sm rounded-lg '
                                                                               'focus:ring-blue-600 '
                                                                               'focus:border-blue-600 block w-full '
@@ -17,9 +18,15 @@ class UserLogin(forms.Form):
                                                                               ']:appearance-none ['
                                                                               '&::-webkit-inner-spin-button'
                                                                               ']:appearance-none',
-                                                                     'placeholder': "+8801000000000"}),
+                                                                     'placeholder': "+8801000000000"},
+                                                            country_choices=[
+                                                                ("BD", "Bangladesh"),
+                                                            ],
+                                                            initial='BD',
+                                                            ),
                              label=_('মোবাইল'),
-                             required=True
+                             required=True,
+                             region='BD'
                              )
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'bg-gray-50 border border-gray-300 '
                                                                           'text-gray-900 sm:text-sm rounded-lg '
@@ -66,8 +73,12 @@ class UserSignupForm(forms.ModelForm):
             'password': _('পাসওয়ার্ড')
         }
         widgets = {
-            'phone': RegionalPhoneNumberWidget(attrs={
-                'class': 'w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2'}),
+            'phone': PhoneNumberPrefixWidget(attrs={
+                'class': 'w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2'},
+                            country_choices=[
+                                ("BD", "Bangladesh"),
+                            ],
+                            initial='BD'),
             'first_name': forms.TextInput(attrs={
                 'class': 'w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2'}),
             'last_name': forms.TextInput(attrs={

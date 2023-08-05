@@ -67,7 +67,7 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractUser):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
-    phone = PhoneNumberField(unique=True, blank=False, null=False)
+    phone = PhoneNumberField(unique=True, blank=False, null=False, region='BD')
     email = models.EmailField(blank=True, null=True)
     username = models.CharField(blank=True, null=True, max_length=50)
     is_active = models.BooleanField(default=True)
