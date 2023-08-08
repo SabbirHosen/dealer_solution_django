@@ -18,7 +18,7 @@
 {% endblock %}
 
 {% block main_content %}
-    <section>
+    <section class="min-h-screen">
         <form id="pageForm" action="" method="post">
             {% csrf_token %}
             <div class="relative float-label-input">
@@ -31,7 +31,7 @@
             <div class="relative my-4 flex items-center justify-between gap-3">
                 <div class="relative float-label-input w-full">
                     <input type="tel" id="numberInput" oninput="showSuggestions()" name="mobileNumber" placeholder=" "
-                           value="{{ phone }}"
+                           value="{{ customer_phone }}"
                            required
                            class="w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2">
                     <label
@@ -48,7 +48,7 @@
 
             <div class="relative float-label-input">
                 <input id="customerName" type="text" name="customerName" placeholder=" " readonly required
-                       value="{{ name }}"
+                       value="{{ customer_name }}"
                        class="w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2">
                 <label
                         class="absolute top-3 left-0 text-gray-400 pointer-events-none transition duration-200 ease-in-outbg-white px-2 text-grey-darker">নাম</label>
@@ -230,4 +230,12 @@
 {% endblock %}
 {% block custom_js %}
     <script src="{% static 'assets/js/collection.js' %}"></script>
+    {% if messages %}
+    {% for message in messages %}
+
+        <script>
+            Toastify({...toastConfig, text: '{{ message }}', style: {background: '{{ message.tags }}'}}).showToast(); //#f43f5e
+        </script>
+    {% endfor %}
+{% endif %}
 {% endblock %}

@@ -384,8 +384,8 @@ class RetailerCollectionFromDues(LoginRequiredMixin, View):
         #     "dueAmount": due
         # }
         data = {
-            'phone': phone,
-            'name': name,
+            'customer_phone': phone,
+            'customer_name': name,
             'cash_due': due,
             'show_suggestions': False,
         }

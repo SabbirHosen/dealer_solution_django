@@ -168,3 +168,5 @@ MESSAGE_TAGS = {
         messages.WARNING: 'alert-warning',
         messages.ERROR: '#f43f5e',
 }
+
+CSRF_TRUSTED_ORIGINS = os.environ.get('ALLOWED_CSRF').split(' ')

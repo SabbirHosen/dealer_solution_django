@@ -1,6 +1,6 @@
 {% extends 'layout/base.html' %}
 {% load static %}
-{% block title %}Buy Sell|Dealer Solution BD{% endblock %}
+{% block title %}Buy Sell | Dealer Solution BD{% endblock %}
 {% block nav_bar %}
     <nav class="max-w-lg mx-auto px-4 py-2 bg-themeblue sticky top-0 z-10">
         <a href="{% url 'retailer:retailer-home' %}" class="inline-block">
@@ -17,7 +17,7 @@
     </nav>
 {% endblock %}
 {% block main_content %}
-    <section>
+    <section class="min-h-screen">
         <form action="" id="pageForm" method="post">
             {% csrf_token %}
             <div class="relative float-label-input">
@@ -112,7 +112,7 @@
 
             <li>
                 <a href="{% url 'authentication:edit-user-profile' %}"
-                   class="flex items-center p-2 rounded-lg hover:bg-gray-100">
+                   class="flex items-center p-2 rounded-lg hover:bg-gray-100 hover:text-slate-900">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                          class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900">
                         <path fill-rule="evenodd"
@@ -124,7 +124,7 @@
                 </a>
             </li>
             <li>
-                <a href="" class="flex items-center p-2 rounded-lg hover:bg-gray-100">
+                <a href="" class="flex items-center p-2 rounded-lg hover:bg-gray-100 hover:text-slate-900">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                          class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900">
                         <path fill-rule="evenodd"
@@ -139,7 +139,7 @@
             </li>
             <li>
                 <a href="{% url 'authentication:pin-change' %}"
-                   class="flex items-center p-2 rounded-lg hover:bg-gray-100">
+                   class="flex items-center p-2 rounded-lg hover:bg-gray-100 hover:text-slate-900">
 
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                          class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900">
@@ -152,7 +152,7 @@
             </li>
             <li>
                 <a href="{% url 'super_admin:help-support-list' %}"
-                   class="flex items-center p-2 rounded-lg hover:bg-gray-100">
+                   class="flex items-center p-2 rounded-lg hover:bg-gray-100 hover:text-slate-900">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                          class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900">
                         <path fill-rule="evenodd"
@@ -165,7 +165,7 @@
             </li>
             <li>
                 <a href="{% url 'retailer:retailer-training' %}"
-                   class="flex items-center p-2 rounded-lg hover:bg-gray-100">
+                   class="flex items-center p-2 rounded-lg hover:bg-gray-100 hover:text-slate-900">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                          class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900">
                         <path fill-rule="evenodd"
@@ -178,7 +178,7 @@
             </li>
             <li>
                 <a href="{% url 'retailer:retailer-privacy-policy' %}"
-                   class="flex items-center p-2 rounded-lg hover:bg-gray-100">
+                   class="flex items-center p-2 rounded-lg hover:bg-gray-100 hover:text-slate-900">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                          class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900">
                         <path fill-rule="evenodd"
@@ -190,7 +190,8 @@
                 </a>
             </li>
             <li>
-                <a href="{% url 'authentication:logout' %}" class="flex items-center p-2 rounded-lg hover:bg-gray-100">
+                <a href="{% url 'authentication:logout' %}"
+                   class="flex items-center p-2 rounded-lg hover:bg-gray-100 hover:text-slate-900">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                          class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900">
                         <path fill-rule="evenodd"
@@ -238,4 +239,7 @@
             });
         };
     </script>
+{% endblock %}
+{% block custom_js %}
+    {% include 'layout/components/js_scripts.html' %}
 {% endblock %}

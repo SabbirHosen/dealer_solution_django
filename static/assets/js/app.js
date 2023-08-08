@@ -70,6 +70,10 @@ const updateDueField = () => {
 		dueField.value =
 			cashField.value === '' ? 0 : totalPriceField.value - cashField.value;
 	}
+	// Reset the value in the second input field if it exceeds the new maximum
+	if (cashField.value > totalPriceField.value) {
+		cashField.value = '';
+	}
 };
 if (cashField) {
 	cashField.addEventListener('input', updateDueField);
