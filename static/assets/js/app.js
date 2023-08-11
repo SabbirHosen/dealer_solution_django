@@ -37,7 +37,7 @@ document.addEventListener(
 // Toast config
 const toastConfig = {
 	text: '',
-	duration: 1500,
+	duration: 2500,
 	newWindow: true,
 	gravity: 'top',
 	position: 'center',

@@ -17,8 +17,8 @@
     </nav>
 {% endblock %}
 {% block main_content %}
-    <section>
-        <div class="space-y-2">
+    <section class="min-h-screen">
+        <div class="space-y-2 min-h-screen">
             {% for d in data %}
                 <a href="{% url 'retailer:customer-dues-details' d.phone %}"
                    class="bg-gray-200/80 shadow px-2 py-2 rounded-md flex justify-between items-center">

@@ -220,13 +220,11 @@
 
             // Add event listener to input1 for change event
             payAbleAmount.addEventListener('change', function () {
-                const value = parseFloat(payAbleAmount.value);
-
                 // Update input2 value
-                dueAmount.value = value;
+                dueAmount.value = parseFloat(payAbleAmount.value);
             });
             paidAmount.addEventListener('change', function () {
-                const value = parseFloat(dueAmount.value);
+                var value = parseFloat(dueAmount.value);
                 {#console.log(value);#}
                 // Remove 'required' attribute from input3 if input1 is empty or zero
                 if (value === 0 || isNaN(value)) {
@@ -239,7 +237,5 @@
             });
         };
     </script>
-{% endblock %}
-{% block custom_js %}
     {% include 'layout/components/js_scripts.html' %}
 {% endblock %}
