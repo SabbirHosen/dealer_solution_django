@@ -10,46 +10,46 @@ from authentication.strings import SET_ROLE_CHOICES
 
 
 # Create your views here.
-class HelpSupportView(LoginRequiredMixin, View):
-    login_url = reverse_lazy('authentication:login')
-    template_name = 'support.html'
-
-    def get(self, request):
-        help_form = HelpSupportFormUser()
-        request.session['previous_page'] = request.META.get('HTTP_REFERER', '/')
-        # print(request.session['previous'])
-        data = {
-            'form': help_form
-        }
-        return render(request, template_name=self.template_name, context=data)
-
-    def post(self, request):
-        help_form = HelpSupportFormUser(request.POST)
-        if help_form.is_valid():
-            obj = help_form.save(commit=False)
-            obj.user = request.user
-            obj.save()
-            messages.success(request, 'সাপোর্ট তৈরি হয়েছে।')
-            return HttpResponseRedirect(request.session['previous_page'])
-        else:
-            data = {
-                'form': help_form
-            }
-            messages.error(request, 'সঠিক তথ্য দিন।')
-            return render(request, template_name=self.template_name, context=data)
-
-
-class HelpSupportListView(LoginRequiredMixin, View):
-    login_url = reverse_lazy('authentication:login')
-    template_name = 'support-list.html'
-
-    def get(self, request):
-        request.session['previous_page'] = request.META.get('HTTP_REFERER', '/')
-        support_obj = HelpSupport.objects.filter(user=request.user).order_by('-created_at')
-        data = {
-            'supports': support_obj
-        }
-        return render(request=request, template_name=self.template_name, context=data)
+# class HelpSupportView(LoginRequiredMixin, View):
+#     login_url = reverse_lazy('authentication:login')
+#     template_name = 'support.html'
+#
+#     def get(self, request):
+#         help_form = HelpSupportFormUser()
+#         request.session['previous_page'] = request.META.get('HTTP_REFERER', '/')
+#         # print(request.session['previous'])
+#         data = {
+#             'form': help_form
+#         }
+#         return render(request, template_name=self.template_name, context=data)
+#
+#     def post(self, request):
+#         help_form = HelpSupportFormUser(request.POST)
+#         if help_form.is_valid():
+#             obj = help_form.save(commit=False)
+#             obj.user = request.user
+#             obj.save()
+#             messages.success(request, 'সাপোর্ট তৈরি হয়েছে।')
+#             return HttpResponseRedirect(request.session['previous_page'])
+#         else:
+#             data = {
+#                 'form': help_form
+#             }
+#             messages.error(request, 'সঠিক তথ্য দিন।')
+#             return render(request, template_name=self.template_name, context=data)
+#
+#
+# class HelpSupportListView(LoginRequiredMixin, View):
+#     login_url = reverse_lazy('authentication:login')
+#     template_name = 'support-list.html'
+#
+#     def get(self, request):
+#         request.session['previous_page'] = request.META.get('HTTP_REFERER', '/')
+#         support_obj = HelpSupport.objects.filter(user=request.user).order_by('-created_at')
+#         data = {
+#             'supports': support_obj
+#         }
+#         return render(request=request, template_name=self.template_name, context=data)
 
 
 class RequestToJoin(View):

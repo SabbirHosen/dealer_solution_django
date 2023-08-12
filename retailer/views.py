@@ -1,15 +1,19 @@
 from datetime import datetime, timedelta
 from django.contrib import messages
 from django.db.models import Sum
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+
+from authentication.forms import UserEditForm, UserInfoForm
 from authentication.models import CustomUser, UserInformation
 from phonenumber_field.validators import validate_international_phonenumber
+
+from super_admin.forms import HelpSupportFormUser
 from .models import Sell, Expense, CashCollection
-from super_admin.models import ExpenseName
+from super_admin.models import ExpenseName, HelpSupport
 from authentication.mixins import RetailerRequiredMixin
 
 
@@ -394,3 +398,97 @@ class RetailerCollectionFromDues(LoginRequiredMixin, View):
 
     def post(self, request, phone):
         return RetailerCollection().post(request)
+
+
+class HelpSupportView(LoginRequiredMixin, View):
+    login_url = reverse_lazy('authentication:login')
+    template_name = 'retailer_support.html'
+
+    def get(self, request):
+        help_form = HelpSupportFormUser()
+        request.session['previous_page'] = request.META.get('HTTP_REFERER', '/')
+        # print(request.session['previous'])
+        data = {
+            'form': help_form
+        }
+        return render(request, template_name=self.template_name, context=data)
+
+    def post(self, request):
+        help_form = HelpSupportFormUser(request.POST)
+        if help_form.is_valid():
+            obj = help_form.save(commit=False)
+            obj.user = request.user
+            obj.save()
+            messages.success(request, 'সাপোর্ট তৈরি হয়েছে।')
+            return HttpResponseRedirect(request.session['previous_page'])
+        else:
+            data = {
+                'form': help_form
+            }
+            messages.error(request, 'সঠিক তথ্য দিন।')
+            return render(request, template_name=self.template_name, context=data)
+
+
+class HelpSupportListView(LoginRequiredMixin, View):
+    login_url = reverse_lazy('authentication:login')
+    template_name = 'retailer_support-list.html'
+
+    def get(self, request):
+        request.session['previous_page'] = request.META.get('HTTP_REFERER', '/')
+        support_obj = HelpSupport.objects.filter(user=request.user).order_by('-created_at')
+        data = {
+            'supports': support_obj
+        }
+        return render(request=request, template_name=self.template_name, context=data)
+
+
+class EditUserProfile(LoginRequiredMixin, View):
+    login_url = reverse_lazy('authentication:login')
+    template_name = 'edit_profile.html'
+
+    def get(self, request):
+        request.session['previous_page'] = request.META.get('HTTP_REFERER', '/')
+        user = request.user
+        user_info = UserInformation.objects.filter(user=user).first()
+        user_form = UserEditForm(instance=user)
+        user_info_form = UserInfoForm(instance=user_info)
+        data = {
+            'forms': [user_form, user_info_form]
+        }
+        return render(request, template_name=self.template_name, context=data)
+
+    def post(self, request):
+        user = request.user
+        user_info = UserInformation.objects.filter(user=user).first()
+        user_form = UserEditForm(request.POST, instance=user)
+        user_info_form = UserInfoForm(request.POST, request.FILES, instance=user_info)
+        if user_form.is_valid() and user_info_form.is_valid():
+            # print(user_form.instance.phone)
+            # print(user_form.cleaned_data.get('user_role'))
+            # user = user_form.save(commit=False)
+            # if user_form.cleaned_data.get('user_role') == 'DE':
+            #     user.is_dealer = True
+            # else:
+            #     pass
+            # user.save()
+            # info = user_info_form.save(commit=False)
+            # info.user = user
+            # info.save()
+            user_save = user_form.save()
+            user_info_save = user_info_form.save()
+            # print('-' * 100)
+            # print(model_to_dict(user_save))
+            # print(model_to_dict(user_info_save))
+            messages.success(request, 'প্রোফাইল আপডেট হয়েছে।')
+            return HttpResponseRedirect(request.session['previous_page'])
+            # if user.is_retailer:
+            #     redirect('retailer:retailer-home')
+            # else:
+            #     return redirect('dashboard:home')
+
+        else:
+            data = {
+                'forms': [user_form, user_info_form]
+            }
+            messages.error(request, 'সঠিক তথ্য দিন।')
+            return render(request, template_name=self.template_name, context=data)

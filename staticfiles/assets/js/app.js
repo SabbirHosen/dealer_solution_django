@@ -37,7 +37,7 @@ document.addEventListener(
 // Toast config
 const toastConfig = {
 	text: '',
-	duration: 1500,
+	duration: 2500,
 	newWindow: true,
 	gravity: 'top',
 	position: 'center',
@@ -72,7 +72,7 @@ const updateDueField = () => {
 	}
 	// Reset the value in the second input field if it exceeds the new maximum
 	if (cashField.value > totalPriceField.value) {
-		cashField.value = '';
+		// cashField.value = '';
 	}
 };
 if (cashField) {

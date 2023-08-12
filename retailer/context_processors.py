@@ -6,11 +6,8 @@ from .models import Sell, Expense
 
 def get_retailer_info(request):
     if request.user.is_authenticated and request.user.is_retailer:
-        # print(request.user)
         user_info = UserInformation.objects.filter(user=request.user).first()
-        # print(user_info)
-        # print(datetime.now().date())
-        sell_objs_today = Sell.objects.filter(date=datetime.now().date(), retailer=request.user)
+        sell_objs_today = Sell.objects.filter(date=datetime.now().date(), retailer=request.user).annotate()
         total_sell = 0
         total_due = 0
         for obj in sell_objs_today:
@@ -44,6 +41,7 @@ def get_retailer_info(request):
             expenses_obj_all['paid_amount__sum'] = 0
         my_cash = total_sell_all - (total_due_all + expenses_obj_all['paid_amount__sum'])
         data.update({'my_cash': my_cash})
+        # print(f'___from retailer context processor: {data}')
         return data
     else:
         return {}

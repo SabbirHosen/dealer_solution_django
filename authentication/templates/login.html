@@ -69,6 +69,14 @@
     </div>
 </section>
 <script src="{% static 'assets/js/toastify.js' %}"></script>
+<script>
+    // Get a reference to the select element
+    var selectElement = document.getElementById('id_phone_0');
+
+    // Hide the select element
+    selectElement.style.display = 'none';
+</script>
+
 {% if messages %}
     {% for message in messages %}
 
