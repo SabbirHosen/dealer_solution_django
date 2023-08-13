@@ -79,6 +79,13 @@
         displayText.textContent = fileName ? "Image Selected" : "Choose File";
     }
 </script>
+<script>
+    // Get a reference to the select element
+    var selectElement = document.getElementById('id_phone_0');
+
+    // Hide the select element
+    selectElement.style.display = 'none';
+</script>
 <script src="{% static 'assets/js/toastify.js' %}"></script>
 {% if messages %}
     {% for message in messages %}

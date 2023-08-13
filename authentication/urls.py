@@ -7,5 +7,5 @@ urlpatterns = [
     path('logout/', views.user_logout, name='logout'),
     path('create-user/', views.CreateUser.as_view(), name='create-user'),
     # path('edit-user-profile/', views.EditUserProfile.as_view(), name='edit-user-profile'),
-    path('pin-change/', views.ResetPin.as_view(), name='pin-change'),
+    # path('pin-change/', views.ResetPin.as_view(), name='pin-change'),
 ]

@@ -21,5 +21,5 @@ urlpatterns = [
     path('help-support/', views.HelpSupportView.as_view(), name='help-support'),
     path('help-support-list', views.HelpSupportListView.as_view(), name='help-support-list'),
     path('edit-user-profile/', views.EditUserProfile.as_view(), name='edit-user-profile'),
-
+    path('pin-change/', views.ResetPin.as_view(), name='pin-change'),
 ]

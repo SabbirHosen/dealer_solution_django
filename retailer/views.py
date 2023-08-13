@@ -1,71 +1,34 @@
 from datetime import datetime, timedelta
 from django.contrib import messages
+from django.contrib.auth import authenticate, logout
 from django.db.models import Sum
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-from authentication.forms import UserEditForm, UserInfoForm
+from authentication.forms import UserEditForm, UserInfoForm, PinChangeForm
 from authentication.models import CustomUser, UserInformation
 from phonenumber_field.validators import validate_international_phonenumber
 
 from super_admin.forms import HelpSupportFormUser
 from .models import Sell, Expense, CashCollection
 from super_admin.models import ExpenseName, HelpSupport
-from authentication.mixins import RetailerRequiredMixin
+from authentication.mixins import RetailerRequiredMixin, CustomUserPassesTestMixin
 
 
 # Create your views here.
-class RetailerIndex(LoginRequiredMixin, RetailerRequiredMixin, View):
-    login_url = reverse_lazy('authentication:login')
+class RetailerIndex(CustomUserPassesTestMixin, View):
     template_name = 'retailer.html'
+    user_type = 'is_retailer'
 
     def get(self, request):
-        # # print(request.user)
-        # user_info = UserInformation.objects.filter(user=request.user).first()
-        # # print(user_info)
-        # # print(datetime.now().date())
-        # sell_objs_today = Sell.objects.filter(date=datetime.now().date(), retailer=request.user)
-        # total_sell = 0
-        # total_due = 0
-        # for obj in sell_objs_today:
-        #     total_sell += obj.payable_amount
-        #     total_due += obj.get_due
-        #
-        # data = {
-        #     'name': user_info.user.get_full_name(),
-        #     'shop_name': user_info.shop_name,
-        #     'phone': user_info.user.phone,
-        #     'image': user_info.photo.url,
-        #     'account': 'Retailer',
-        #     'total_sell': total_sell,
-        #     'total_due': total_due,
-        # }
-        # expenses_obj = Expense.objects.filter(date=datetime.now().date(), retailer=request.user).aggregate(
-        #     Sum('paid_amount'))
-        # if expenses_obj.get('paid_amount__sum') is None:
-        #     expenses_obj['paid_amount__sum'] = 0
-        # data.update(expenses_obj)
-        # # print(expenses_obj)
-        # sell_objs_all = Sell.objects.filter(retailer=request.user)
-        # total_sell_all = 0
-        # total_due_all = 0
-        # for obj in sell_objs_all:
-        #     total_sell_all += obj.payable_amount
-        #     total_due_all += obj.get_due
-        # expenses_obj_all = Expense.objects.filter(retailer=request.user).aggregate(
-        #     Sum('paid_amount'))
-        # if expenses_obj_all.get('paid_amount__sum') is None:
-        #     expenses_obj_all['paid_amount__sum'] = 0
-        # my_cash = total_sell_all - (total_due_all + expenses_obj_all['paid_amount__sum'])
-        # data.update({'my_cash': my_cash})
-        # # print(my_cash, total_sell_all, total_due_all, expenses_obj_all['paid_amount__sum'])
         return render(request, self.template_name)
 
 
-class BuySell(View):
+class BuySell(CustomUserPassesTestMixin, View):
+    user_type = 'is_retailer'
     template_name = 'buy-sell.html'
 
     def get(self, request):
@@ -85,6 +48,17 @@ class BuySell(View):
             if '+88' not in customer_phone_input:
                 phone_input = '+88' + customer_phone_input
             validate_international_phonenumber(customer_phone_input)
+
+            if int(paid_amount_input) > int(payable_amount_input):
+                messages.error(request, 'নগদ গ্রহণ পণ্যের মোট মূল্যের থেকে বেশি')
+                return render(request, template_name=self.template_name)
+            if int(payable_amount_input) < 0:
+                messages.error(request, 'পণ্যের মোট মূল্যের টাকা শূন্য এর থেকে কম')
+                return render(request, template_name=self.template_name)
+            if int(paid_amount_input) < 0:
+                messages.error(request, 'নগদ গ্রহণ টাকা শূন্য এর থেকে কম' % customer_phone_input)
+                return render(request, template_name=self.template_name)
+
             obj = Sell.objects.create(date=date_input,
                                       payable_amount=payable_amount_input,
                                       paid_amount=paid_amount_input,
@@ -105,7 +79,8 @@ class BuySell(View):
         return redirect('retailer:retailer-home')
 
 
-class RetailerExpense(View):
+class RetailerExpense(CustomUserPassesTestMixin, View):
+    user_type = 'is_retailer'
     template_name = 'expenses.html'
 
     def get(self, request):
@@ -132,7 +107,8 @@ class RetailerExpense(View):
         return redirect('retailer:retailer-home')
 
 
-class RetailerDues(View):
+class RetailerDues(CustomUserPassesTestMixin, View):
+    user_type = 'is_retailer'
     template_name = 'due-note.html'
 
     def get(self, request):
@@ -164,7 +140,8 @@ class RetailerDues(View):
         return render(request=request, template_name=self.template_name, context={'data': data})
 
 
-class CustomerDuesDetails(View):
+class CustomerDuesDetails(CustomUserPassesTestMixin, View):
+    user_type = 'is_retailer'
     template_name = 'due-profile.html'
 
     def get(self, request, phone):
@@ -210,8 +187,8 @@ def api_customer_info(request):
     return JsonResponse(data, safe=False, status=200)
 
 
-class RetailerCollection(LoginRequiredMixin, View):
-    login_url = reverse_lazy('authentication:login')
+class RetailerCollection(CustomUserPassesTestMixin,  View):
+    user_type = 'is_retailer'
     template_name = 'collection.html'
 
     def get(self, request):
@@ -271,15 +248,16 @@ class RetailerCollection(LoginRequiredMixin, View):
         return redirect('retailer:retailer-home')
 
 
-class RetailerBusinessStatus(LoginRequiredMixin, View):
-    login_url = reverse_lazy('authentication:login')
+class RetailerBusinessStatus(CustomUserPassesTestMixin, View):
+    user_type = 'is_retailer'
     template_name = 'business-status.html'
 
     def get(self, request):
         return render(request, template_name=self.template_name)
 
 
-class RetailerBusinessStatusData(LoginRequiredMixin, View):
+class RetailerBusinessStatusData(CustomUserPassesTestMixin, View):
+    user_type = 'is_retailer'
     login_url = reverse_lazy('authentication:login')
 
     def get(self, request, status, time_period):
@@ -291,7 +269,7 @@ class RetailerBusinessStatusData(LoginRequiredMixin, View):
 
         }
         model_of = model_map.get(status)
-        print(model_of)
+        # print(model_of)
         if time_period == 'day':
             objects = model_of.objects.filter(retailer=request.user, date=datetime.now().date())
         elif time_period == 'week':
@@ -355,24 +333,24 @@ class RetailerBusinessStatusData(LoginRequiredMixin, View):
         return JsonResponse(status=200, data=data, safe=False)
 
 
-class RetailerTraining(LoginRequiredMixin, View):
-    login_url = reverse_lazy('authentication:login')
+class RetailerTraining(CustomUserPassesTestMixin, View):
+    user_type = 'is_retailer'
     template_name = 'training.html'
 
     def get(self, request):
         return render(request, template_name=self.template_name)
 
 
-class RetailerPrivacyPolicy(LoginRequiredMixin, View):
-    login_url = reverse_lazy('authentication:login')
+class RetailerPrivacyPolicy(CustomUserPassesTestMixin, View):
+    user_type = 'is_retailer'
     template_name = 'privacy-policy.html'
 
     def get(self, request):
         return render(request, template_name=self.template_name)
 
 
-class RetailerCollectionFromDues(LoginRequiredMixin, View):
-    login_url = reverse_lazy('authentication:login')
+class RetailerCollectionFromDues(CustomUserPassesTestMixin, View):
+    user_type = 'is_retailer'
     template_name = 'collection.html'
 
     def get(self, request, phone):
@@ -400,8 +378,8 @@ class RetailerCollectionFromDues(LoginRequiredMixin, View):
         return RetailerCollection().post(request)
 
 
-class HelpSupportView(LoginRequiredMixin, View):
-    login_url = reverse_lazy('authentication:login')
+class HelpSupportView(CustomUserPassesTestMixin, View):
+    user_type = 'is_retailer'
     template_name = 'retailer_support.html'
 
     def get(self, request):
@@ -429,8 +407,8 @@ class HelpSupportView(LoginRequiredMixin, View):
             return render(request, template_name=self.template_name, context=data)
 
 
-class HelpSupportListView(LoginRequiredMixin, View):
-    login_url = reverse_lazy('authentication:login')
+class HelpSupportListView(CustomUserPassesTestMixin, View):
+    user_type = 'is_retailer'
     template_name = 'retailer_support-list.html'
 
     def get(self, request):
@@ -442,8 +420,8 @@ class HelpSupportListView(LoginRequiredMixin, View):
         return render(request=request, template_name=self.template_name, context=data)
 
 
-class EditUserProfile(LoginRequiredMixin, View):
-    login_url = reverse_lazy('authentication:login')
+class EditUserProfile(CustomUserPassesTestMixin, View):
+    user_type = 'is_retailer'
     template_name = 'edit_profile.html'
 
     def get(self, request):
@@ -492,3 +470,47 @@ class EditUserProfile(LoginRequiredMixin, View):
             }
             messages.error(request, 'সঠিক তথ্য দিন।')
             return render(request, template_name=self.template_name, context=data)
+
+
+class ResetPin(CustomUserPassesTestMixin, View):
+    user_type = 'is_retailer'
+    template_name = 'retailer_reset_pin.html'
+
+    def get(self, request):
+        request.session['previous_page'] = request.META.get('HTTP_REFERER', '/')
+        pin_change_form = PinChangeForm()
+        data = {
+            'pin_change_form': pin_change_form
+        }
+        return render(request, template_name=self.template_name, context=data)
+
+    def post(self, request):
+        pin_change_form = PinChangeForm(request.POST)
+        if pin_change_form.is_valid():
+            user = authenticate(request, phone=request.user.phone,
+                                password=pin_change_form.cleaned_data.get('old_password'))
+            if user:
+                if pin_change_form.cleaned_data.get('new_password') == pin_change_form.cleaned_data.get(
+                        'retype_new_password'):
+                    user.set_password(pin_change_form.cleaned_data.get('new_password'))
+                    user.save()
+                    logout(request)
+                    messages.info(request, 'পাসওয়ার্ড পরিবর্তন সফল হয়েছে!')
+                    return redirect('authentication:login')
+                else:
+                    messages.error(request, 'নতুন পাসওয়ার্ড দুইটি মিল নেই!')
+                    # data = {
+                    #     'pin_change_form': pin_change_form,
+                    # }
+                    # return render(request, template_name=self.template_name, context=data)
+            else:
+                messages.error(request, 'পুরাতন পাসওয়ার্ড সঠিক নয়!')
+                # data = {
+                #     'pin_change_form': pin_change_form,
+                # }
+                # return render(request, template_name=self.template_name, context=data)
+
+        data = {
+            'pin_change_form': pin_change_form,
+        }
+        return render(request, template_name=self.template_name, context=data)

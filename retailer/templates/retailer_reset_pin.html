@@ -11,37 +11,39 @@
                           d="M11.03 3.97a.75.75 0 010 1.06l-6.22 6.22H21a.75.75 0 010 1.5H4.81l6.22 6.22a.75.75 0 11-1.06 1.06l-7.5-7.5a.75.75 0 010-1.06l7.5-7.5a.75.75 0 011.06 0z"
                           clip-rule="evenodd"/>
                 </svg>
-                <span class="ml-1 font-medium text-lg">ট্রেনিং</span>
+                <span class="ml-1 font-medium text-lg">পিন পরিবর্তন</span>
             </div>
         </a>
     </nav>
 {% endblock %}
 
 {% block main_content %}
-    <section>
-        <div class="space-y-10 min-h-screen">
-            <div>
-                <h1 class="text-slate-700 font-semibold mb-3">কিভাবে একাউন্ট খুলবেন</h1>
-                <div class="relative" style="padding-top: 56.25%">
-                    <iframe class="absolute inset-0 w-full h-full"
-                            src="https://www.youtube.com/embed/r5kukRMmZNI" frameborder="0"></iframe>
+    <section class="min-h-screen">
+        <form action="" id="pageForm" method="post">
+            {% csrf_token %}
+            {% for field in pin_change_form %}
+                <div class="my-4">
+                    <label class="block mb-2 text-sm font-medium text-gray-900">
+                        {{ field.label }}</label>
+                    {{ field }}
                 </div>
-            </div>
-            <div>
-                <h1 class="text-slate-700 font-semibold mb-3">কিভাবে একাউন্ট খুলবেন</h1>
-                <div class="relative" style="padding-top: 56.25%">
-                    <iframe class="absolute inset-0 w-full h-full"
-                            src="https://www.youtube.com/embed/rkpzYNB6xks" frameborder="0"></iframe>
-                </div>
-            </div>
-            <div>
-                <h1 class="text-slate-700 font-semibold mb-3">কিভাবে একাউন্ট খুলবেন</h1>
-                <div class="relative" style="padding-top: 56.25%">
-                    <iframe class="absolute inset-0 w-full h-full"
-                            src="https://www.youtube-nocookie.com/embed/FMrtSHAAPhM" frameborder="0"></iframe>
-                </div>
-            </div>
-        </div>
+            {% endfor %}
+            {#            {% for message in messages %}#}
+            {#            <span class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">#}
+            {#                    {{ message }}#}
+            {#                </span>#}
+            {#        {% endfor %}#}
+            {#            <div class="my-4">#}
+            {#                <label class="block mb-2 text-sm font-medium text-gray-900">নতুন পিন</label>#}
+            {#                <input type="password" inputmode="numeric" name="password" id="password" placeholder="****"#}
+            {#                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 font-medium"#}
+            {#                    required="">#}
+            {#            </div>#}
+            <button type="submit"
+                    class="w-full text-white bg-themeblue hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-md px-5 py-3 text-center">
+                এগিয়ে যান
+            </button>
+        </form>
     </section>
 {% endblock %}
 {% block sidebar %}

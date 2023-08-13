@@ -16,6 +16,11 @@ class UserLogin(View):
     template_name = 'login.html'
 
     def get(self, request):
+        if request.user.is_authenticated:
+            if request.session.get('home_url'):
+                return redirect(request.session.get('home_url'))
+            else:
+                return redirect('dashboard:home')
         login_form = forms.UserLogin()
         return render(request, template_name=self.template_name, context={'login_form': login_form})
 
@@ -80,10 +85,17 @@ class CreateUser(LoginRequiredMixin, View):
             messages.success(request, 'নতুন ইউজার তৈরি হয়েছে।')
             return redirect('dashboard:home')
         else:
+            # print(user_form.errors)
+            # print(user_info_form.errors)
             data = {
                 'forms': [user_form, user_info_form]
             }
-            messages.error(request, 'সঠিক তথ্য দিন।')
+            for field, errors in user_form.errors.items():
+                error_messages = ", ".join(errors)
+                messages.error(request, f"{error_messages}")
+            for field, errors in user_info_form.errors.items():
+                error_messages = ", ".join(errors)
+                messages.error(request, f"{error_messages}")
             return render(request, template_name=self.template_name, context=data)
 
 

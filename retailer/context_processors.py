@@ -7,7 +7,7 @@ from .models import Sell, Expense
 def get_retailer_info(request):
     if request.user.is_authenticated and request.user.is_retailer:
         user_info = UserInformation.objects.filter(user=request.user).first()
-        sell_objs_today = Sell.objects.filter(date=datetime.now().date(), retailer=request.user).annotate()
+        sell_objs_today = Sell.objects.filter(date=datetime.now().date(), retailer=request.user)
         total_sell = 0
         total_due = 0
         for obj in sell_objs_today:
