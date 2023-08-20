@@ -41,6 +41,7 @@ def get_retailer_info(request):
             expenses_obj_all['paid_amount__sum'] = 0
         my_cash = total_sell_all - (total_due_all + expenses_obj_all['paid_amount__sum'])
         data.update({'my_cash': my_cash})
+        data.update({'my_due': total_due_all})
         # print(f'___from retailer context processor: {data}')
         return data
     else:

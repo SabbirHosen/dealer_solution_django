@@ -33,19 +33,17 @@
                        class="focus:outline-none focus:shadow-outline py-2 px-3 block appearance-none leading-normal"
                        name="expenseImage">
             </div>
-            <select name="productSelected" required=""
+            <select name="productSelected" required
                     class="mb-4 bg-[#F6F9FC] select block w-full p-2 rounded border-[1.5px] border-gray-400 focus:outline-none focus:border-gray-900 focus:border-2">
-                <option selected="" disabled="">খরচের ধরন নির্বাচন করুন</option>
+                <option selected disabled="">খরচের ধরন নির্বাচন করুন</option>
                 {% for ex in expanses_name %}
                     <option value="{{ ex.id }}">{{ ex.name }}</option>
                 {% endfor %}
-                {#                <option value="2">দোকান ভাড়া</option>#}
-                {#                <option value="3">অন্যান্য খরচ</option>#}
             </select>
 
             <div class="grid grid-cols-2 gap-3 my-4">
                 <div class="relative float-label-input">
-                    <input type="number" id="name" placeholder=" " required name="paidAmount"
+                    <input type="number" id="name" placeholder=" " required name="paidAmount" value="{{ paidAmount }}"
                            class="w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2">
                     <label for="name"
                            class="absolute top-3 left-0 text-gray-400 pointer-events-none transition duration-200 ease-in-outbg-white px-2 text-grey-darker">টাকার
@@ -53,6 +51,7 @@
                 </div>
                 <div class="relative float-label-input">
                     <input type="date" id="datePicker" name="datePicker" placeholder=" " required
+                           value="2023-08-09"
                            class="w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2">
                     <label for="name"
                            class="absolute top-3 left-0 text-gray-400 pointer-events-none transition duration-200 ease-in-outbg-white px-2 text-grey-darker">
@@ -61,7 +60,7 @@
             </div>
 
             <textarea rows="4" cols="50" name="comment" placeholder="মন্তব্য (না দিলেও হবে)"
-                      class="w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2"></textarea>
+                      class="w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2">{{ comment }}</textarea>
 
             <button type="submit"
                     class="mt-10 w-full text-white bg-themeblue hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-md px-5 py-3 text-center">
@@ -200,4 +199,5 @@
             displayText.textContent = fileName ? "Image Selected" : "Choose File";
         }
     </script>
+    {% include 'layout/components/js_scripts.html' %}
 {% endblock %}
