@@ -1,21 +1,17 @@
 from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth import authenticate, logout
-from django.db.models import Sum
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-
 from authentication.forms import UserEditForm, UserInfoForm, PinChangeForm
-from authentication.models import CustomUser, UserInformation
+from authentication.models import UserInformation
 from phonenumber_field.validators import validate_international_phonenumber
-
 from super_admin.forms import HelpSupportFormUser
 from .models import Sell, Expense, CashCollection
 from super_admin.models import ExpenseName, HelpSupport
-from authentication.mixins import RetailerRequiredMixin, CustomUserPassesTestMixin
+from authentication.mixins import CustomUserPassesTestMixin
 
 
 # Create your views here.
@@ -43,22 +39,38 @@ class BuySell(CustomUserPassesTestMixin, View):
 
         # print('-' * 100)
         # print()
-        # print(date_input, paid_amount_input, payable_amount_input, customer_name_input, customer_phone_input)
+        print(
+            date_input,
+            paid_amount_input,
+            payable_amount_input,
+            customer_name_input,
+            customer_phone_input,
+        )
+        data = {
+            "date_input": date_input,
+            "paid_amount_input": paid_amount_input,
+            "payable_amount_input": payable_amount_input,
+            "customer_name_input": customer_name_input,
+            "customer_phone_input": customer_phone_input,
+        }
+
         try:
             if "+88" not in customer_phone_input:
                 customer_phone_input = "+88" + customer_phone_input
             validate_international_phonenumber(customer_phone_input)
-
-            if int(paid_amount_input) > int(payable_amount_input):
-                messages.error(request, "নগদ গ্রহণ পণ্যের মোট মূল্যের থেকে বেশি")
-                return render(request, template_name=self.template_name)
-            if int(payable_amount_input) < 0:
-                messages.error(request, "পণ্যের মোট মূল্যের টাকা শূন্য এর থেকে কম")
-                return render(request, template_name=self.template_name)
-            if int(paid_amount_input) < 0:
-                messages.error(request, "নগদ গ্রহণ টাকা শূন্য এর থেকে কম")
-                return render(request, template_name=self.template_name)
-
+        except:
+            messages.error(request, "%s সঠিক নাম্বার দিন" % customer_phone_input)
+            return render(request, template_name=self.template_name, context=data)
+        if int(paid_amount_input) > int(payable_amount_input):
+            messages.error(request, "নগদ গ্রহণ পণ্যের মোট মূল্যের থেকে বেশি")
+            return render(request, template_name=self.template_name, context=data)
+        if int(payable_amount_input) < 0:
+            messages.error(request, "পণ্যের মোট মূল্যের টাকা শূন্য এর থেকে কম")
+            return render(request, template_name=self.template_name, context=data)
+        if int(paid_amount_input) < 0:
+            messages.error(request, "নগদ গ্রহণ টাকা শূন্য এর থেকে কম")
+            return render(request, template_name=self.template_name, context=data)
+        if customer_phone_input and customer_name_input:
             obj = Sell.objects.create(
                 date=date_input,
                 payable_amount=payable_amount_input,
@@ -68,15 +80,16 @@ class BuySell(CustomUserPassesTestMixin, View):
                 retailer=request.user,
             )
             obj.save()
-            # print(obj)
-            messages.success(request, "বিক্রি সফল হয়েছে !")
-        except:
-            # data = {
-            #     'Phone': 'Enter a valid phone number'
-            # }
-            # print(data)
-            messages.error(request, "%s সঠিক নাম্বার দিন" % customer_phone_input)
-            return render(request, template_name=self.template_name)
+        else:
+            obj = Sell.objects.create(
+                date=date_input,
+                payable_amount=payable_amount_input,
+                paid_amount=paid_amount_input,
+                retailer=request.user,
+            )
+            obj.save()
+        # print(obj)
+        messages.success(request, "বিক্রি সফল হয়েছে !")
 
         return redirect("retailer:retailer-home")
 
@@ -100,11 +113,11 @@ class RetailerExpense(CustomUserPassesTestMixin, View):
         date_input = request.POST.get("datePicker")
         comments_input = request.POST.get("comment")
         expense_obj = ExpenseName.objects.filter(id=type_of_expense).first()
-        print("-" * 19, "from retailer expense")
-        print(image_input)
-        print(type_of_expense)
-        print(expense_obj)
-        print(date_input)
+        # print("-" * 19, "from retailer expense")
+        # print(image_input)
+        # print(type_of_expense)
+        # print(expense_obj)
+        # print(date_input)
         if type_of_expense is None or expense_obj is None:
             print("test")
             messages.error(request, "খরচের ধরণ সিলেক্ট করুন !")
@@ -150,7 +163,7 @@ class RetailerDues(CustomUserPassesTestMixin, View):
             .values("customer_number", "customer_name")
             .distinct()
         )
-        dues_objs_greater_zero = [due for due in dues_obj if due.get_due > 0]
+        # dues_objs_greater_zero = [due for due in dues_obj if due.get_due > 0]
         data = []
         key = 1
         # print(distinct_phone)
@@ -259,19 +272,25 @@ class RetailerCollection(CustomUserPassesTestMixin, View):
         paid_amount_input = request.POST.get("cashReceived")
         customer_name_input = request.POST.get("customerName")
         due_amount_input = request.POST.get("cashDue")
-        collection_obj = CashCollection.objects.create(
-            date=date_input,
-            customer_number=phone_input,
-            customer_name=customer_name_input,
-            due_amount=due_amount_input,
-            paid_amount=paid_amount_input,
-            retailer=request.user,
-        )
+        data = {
+            "date_input": date_input,
+            "customer_phone": phone_input,
+            "cash_received": paid_amount_input,
+            "customer_name": customer_name_input,
+            "cash_due": due_amount_input,
+            "show_suggestions": True,
+        }
+        if int(due_amount_input) <= 0:
+            messages.error(request, f"{customer_name_input} এর কোনো বাকি নেই!")
+            return render(request, template_name=self.template_name, context=data)
+        elif int(paid_amount_input) > int(due_amount_input):
+            messages.error(request, f"বাকির থেকে বেশি টাকা জমা দেয়া হয়েছে!")
+            return render(request, template_name=self.template_name, context=data)
         sell_objs = Sell.objects.filter(
             retailer=request.user, customer_number=phone_input
         )
         if sell_objs:
-            paid_amount = int(collection_obj.paid_amount)
+            paid_amount = int(paid_amount_input)
             # print(sell_objs, paid_amount)
             for obj in sell_objs:
                 # print('p', obj.get_due)
@@ -285,23 +304,19 @@ class RetailerCollection(CustomUserPassesTestMixin, View):
                     else:
                         obj.paid_amount += paid_amount
                         paid_amount = paid_amount - paid_amount
-                        # print('amount', paid_amount)
-                # print('a', obj.get_due, paid_amount)
                 obj.save()
-
-            # print(collection_obj)
+            collection_obj = CashCollection.objects.create(
+                date=date_input,
+                customer_number=phone_input,
+                customer_name=customer_name_input,
+                due_amount=due_amount_input,
+                paid_amount=paid_amount_input,
+                retailer=request.user,
+            )
             collection_obj.save()
             messages.success(request, "কালেকশন সফল হয়েছে !")
         else:
-            data = {
-                "date": date_input,
-                "phone": phone_input,
-                "name": customer_name_input,
-                "cash_due": due_amount_input,
-                "cash_received": paid_amount_input,
-                "message": "Customer is not exist on the phone number",
-            }
-            messages.error(request, "সঠিক তথ্য দিন।")
+            messages.error(request, "কোনো কাস্টমার পাওয়া যায়নি, সঠিক তথ্য দিন।")
             return render(
                 request=request, template_name=self.template_name, context=data
             )
@@ -551,16 +566,8 @@ class ResetPin(CustomUserPassesTestMixin, View):
                     return redirect("authentication:login")
                 else:
                     messages.error(request, "নতুন পাসওয়ার্ড দুইটি মিল নেই!")
-                    # data = {
-                    #     'pin_change_form': pin_change_form,
-                    # }
-                    # return render(request, template_name=self.template_name, context=data)
             else:
                 messages.error(request, "পুরাতন পাসওয়ার্ড সঠিক নয়!")
-                # data = {
-                #     'pin_change_form': pin_change_form,
-                # }
-                # return render(request, template_name=self.template_name, context=data)
 
         data = {
             "pin_change_form": pin_change_form,

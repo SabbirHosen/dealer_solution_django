@@ -29,6 +29,7 @@
             </div>
             <div class="relative float-label-input my-4">
                 <input type="number" id="totalPriceField" placeholder=" " name="totalPrice" required
+                       value="{{ payable_amount_input }}"
                        class="w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2">
                 <label
                         class="absolute top-3 left-0 text-gray-400 pointer-events-none transition duration-200 ease-in-outbg-white px-2 text-grey-darker">পণ্যের
@@ -37,6 +38,7 @@
             <div class="my-4 flex items-center justify-between gap-3">
                 <div class="relative float-label-input w-2/3">
                     <input type="number" id="cashField" placeholder=" " name="cashReceived" required
+                           value="{{ paid_amount_input }}"
                            class="w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2">
                     <label
                             class="absolute top-3 left-0 text-gray-400 pointer-events-none transition duration-200 ease-in-outbg-white px-2 text-grey-darker">
@@ -57,8 +59,9 @@
                         আছে</label>
                 </div>
                 <div class="relative float-label-input my-4">
-                    <input type="tel" id="numberInput" oninput="showSuggestions()" placeholder=" "
-                           name="mobileNumber" required
+                    <input type="tel" id="numberInput"
+                           oninput="showSuggestions()" placeholder=" "
+                           name="mobileNumber" required value="{{ customer_phone_input }}"
                            class="w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2">
                     <label
                             class="absolute top-3 left-0 text-gray-400 pointer-events-none transition duration-200 ease-in-outbg-white px-2 text-grey-darker">মোবাইল
@@ -70,6 +73,7 @@
 
                 <div class="relative float-label-input">
                     <input type="text" id="customerName" placeholder=" " name="customerName" required
+                           value="{{ customer_name_input }}"
                            class="w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2">
                     <label
                             class="absolute top-3 left-0 text-gray-400 pointer-events-none transition duration-200 ease-in-outbg-white px-2 text-grey-darker">নাম</label>
