@@ -20,6 +20,9 @@ class Sell(UserTimeStampMixin):
     def get_due(self):
         return self.payable_amount - self.paid_amount
 
+    def __str__(self):
+        return f'{self.retailer.get_full_name()}>>{self.date}'
+
 
 class CashCollection(UserTimeStampMixin):
     paid_amount = models.IntegerField(blank=False, null=False)
@@ -30,7 +33,7 @@ class CashCollection(UserTimeStampMixin):
     retailer = models.ForeignKey(CustomUser, on_delete=models.RESTRICT)
 
     def __str__(self):
-        return f'{self.customer_name}->{self.customer_number}->{self.paid_amount}'
+        return f'{self.retailer.get_full_name()}>>{self.customer_number}->{self.date}'
 
 
 class Expense(UserTimeStampMixin):
@@ -42,5 +45,5 @@ class Expense(UserTimeStampMixin):
     date = models.DateField(blank=True, null=True)
 
     def __str__(self):
-        return f'{self.name}  {self.retailer.get_full_name()}'
+        return f'{self.retailer.get_full_name()}>>{self.date}'
 
