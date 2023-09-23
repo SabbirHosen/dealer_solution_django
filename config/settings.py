@@ -54,7 +54,9 @@ LOCAL_APPS = [
     "dashboard",
     "super_admin",
     "retailer",
+    "dealer",
 ]
+
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [

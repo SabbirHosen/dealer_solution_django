@@ -32,6 +32,7 @@ urlpatterns = [
     path("", include("dashboard.urls", namespace="dashboard")),
     path("retailer/", include("retailer.urls", namespace="retailer")),
     path("super-admin/", include("super_admin.urls", namespace="super_admin")),
+    path("dealer/", include("dealer.urls", namespace="dealer")),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

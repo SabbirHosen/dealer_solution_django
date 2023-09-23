@@ -53,41 +53,40 @@ from authentication.strings import SET_ROLE_CHOICES
 
 
 class RequestToJoin(View):
-    template_name = 'new_user.html'
+    template_name = "new_user.html"
 
     def get(self, request):
-        data = {
-            'role': SET_ROLE_CHOICES
-        }
+        data = {"role": SET_ROLE_CHOICES[:-1]}
         return render(request=request, template_name=self.template_name, context=data)
 
     def post(self, request):
         division_dict = {
-            "1": 'চট্টগ্রাম',
-            "2": 'রাজশাহী',
-            "3": 'খুলনা',
-            "4": 'বরিশাল',
-            "5": 'সিলেট',
-            "6": 'ঢাকা',
-            "7": 'রংপুর',
-            "8": 'ময়মনসিংহ'
+            "1": "চট্টগ্রাম",
+            "2": "রাজশাহী",
+            "3": "খুলনা",
+            "4": "বরিশাল",
+            "5": "সিলেট",
+            "6": "ঢাকা",
+            "7": "রংপুর",
+            "8": "ময়মনসিংহ",
         }
-        shop_name_input = request.POST.get('shopName')
-        owner_name_input = request.POST.get('ownerName')
-        phone_input = request.POST.get('phone')
-        business_type_input = request.POST.get('businessType')
-        division_input = request.POST.get('division')
-        district_input = request.POST.get('district')
-        if '+88' not in phone_input:
-            phone_input = '+88' + phone_input
+        shop_name_input = request.POST.get("shopName")
+        owner_name_input = request.POST.get("ownerName")
+        phone_input = request.POST.get("phone")
+        business_type_input = request.POST.get("businessType")
+        division_input = request.POST.get("division")
+        district_input = request.POST.get("district")
+        if "+88" not in phone_input:
+            phone_input = "+88" + phone_input
 
         # print(shop_name_input, owner_name_input, phone_input, business_type_input, division_dict.get(division_input), district_input)
-        obj = RequestNewUser.objects.create(shop_name=shop_name_input,
-                                            user_name=owner_name_input,
-                                            user_number=phone_input,
-                                            business_type=business_type_input,
-                                            division=division_dict.get(division_input),
-                                            district=district_input
-                                            )
+        obj = RequestNewUser.objects.create(
+            shop_name=shop_name_input,
+            user_name=owner_name_input,
+            user_number=phone_input,
+            business_type=business_type_input,
+            division=division_dict.get(division_input),
+            district=district_input,
+        )
         # print(obj)
-        return render(request=request, template_name='success.html')
+        return render(request=request, template_name="success.html")
