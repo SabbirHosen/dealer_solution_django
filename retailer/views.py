@@ -55,9 +55,10 @@ class BuySell(CustomUserPassesTestMixin, View):
         }
 
         try:
-            if "+88" not in customer_phone_input:
-                customer_phone_input = "+88" + customer_phone_input
-            validate_international_phonenumber(customer_phone_input)
+            if customer_phone_input and customer_name_input:
+                if "+88" not in customer_phone_input:
+                    customer_phone_input = "+88" + customer_phone_input
+                validate_international_phonenumber(customer_phone_input)
         except:
             messages.error(request, "%s সঠিক নাম্বার দিন" % customer_phone_input)
             return render(request, template_name=self.template_name, context=data)
