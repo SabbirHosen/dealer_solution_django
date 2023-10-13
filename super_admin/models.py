@@ -42,3 +42,27 @@ class RequestNewUser(models.Model):
 
     def __str__(self):
         return f"{self.user_name}-{self.request_date}"
+
+
+class Company(models.Model):
+    name = models.CharField(max_length=255, blank=False, null=False)
+    dealers = models.ManyToManyField(
+        CustomUser,
+        through="DealerCompany",
+        related_name="dealer_companies",
+        blank=True,
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class DealerCompany(models.Model):
+    dealer = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ("dealer", "company")
+
+    def __str__(self):
+        return f"{self.dealer}-{self.company}"

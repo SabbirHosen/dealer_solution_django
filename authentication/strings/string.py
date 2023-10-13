@@ -13,3 +13,9 @@ SET_ROLE_CHOICES = (
 
 
 SET_HELP_SUPPORT_STATUS = (("PR", _("প্রসেসিং")), ("DN", _("সম্পন্ন")))
+
+UNIT_CHOICES = (
+    ("carton", _("কার্টুন")),
+    ("case", _("কেস")),
+    ("poly", _("পলি")),
+)
