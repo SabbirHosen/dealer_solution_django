@@ -1,85 +1,59 @@
+{% extends 'layout/base.html' %}
 {% load static %}
-<!doctype html>
-<html lang="bn">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="google" content="notranslate">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
-    <title>Dealer Solutions</title>
-</head>
-
-<body>
-<nav class="max-w-lg mx-auto px-4 py-2 bg-themeblue sticky top-0 z-10 flex justify-between items-center">
-    <a href="{% url 'retailer:retailer-home' %}" class="inline-block">
-        <div
-                class="flex items-center p-2 text-white text-base active:bg-white/20 transition duration-150 ease-in-out">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                <path fill-rule="evenodd"
-                      d="M11.03 3.97a.75.75 0 010 1.06l-6.22 6.22H21a.75.75 0 010 1.5H4.81l6.22 6.22a.75.75 0 11-1.06 1.06l-7.5-7.5a.75.75 0 010-1.06l7.5-7.5a.75.75 0 011.06 0z"
-                      clip-rule="evenodd"/>
-            </svg>
-            <span class="ml-1 font-medium text-lg">সাপোর্ট</span>
-        </div>
-    </a>
-    <a href="{% url 'super_admin:help-support' %}" class="px-2 py-1 rounded-md bg-white text-slate-900">নতুন সাপোর্ট</a>
-</nav>
-
-<section>
-    <div class="space-y-2">
-
-        {% for support in supports %}
-            <div class="bg-gray-200/80 shadow px-2 py-2 rounded-md flex justify-between items-center">
-                <div>
-                    <p>{{ support.created_at }}</p>
-                    <p class="text-sm text-gray-500">{{ support.problems }}</p>
-                </div>
-                <div>
-                    {% if support.status == 'DN' %}
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                             class="w-6 h-6 text-green-500">
-                            <path fill-rule="evenodd"
-                                  d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
-                                  clip-rule="evenodd"/>
-                        </svg>
-                    {% else %}
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                             class="w-6 h-6 text-gray-500">
-                            <path fill-rule="evenodd"
-                                  d="M12 5.25c1.213 0 2.415.046 3.605.135a3.256 3.256 0 013.01 3.01c.044.583.077 1.17.1 1.759L17.03 8.47a.75.75 0 10-1.06 1.06l3 3a.75.75 0 001.06 0l3-3a.75.75 0 00-1.06-1.06l-1.752 1.751c-.023-.65-.06-1.296-.108-1.939a4.756 4.756 0 00-4.392-4.392 49.422 49.422 0 00-7.436 0A4.756 4.756 0 003.89 8.282c-.017.224-.033.447-.046.672a.75.75 0 101.497.092c.013-.217.028-.434.044-.651a3.256 3.256 0 013.01-3.01c1.19-.09 2.392-.135 3.605-.135zm-6.97 6.22a.75.75 0 00-1.06 0l-3 3a.75.75 0 101.06 1.06l1.752-1.751c.023.65.06 1.296.108 1.939a4.756 4.756 0 004.392 4.392 49.413 49.413 0 007.436 0 4.756 4.756 0 004.392-4.392c.017-.223.032-.447.046-.672a.75.75 0 00-1.497-.092c-.013.217-.028.434-.044.651a3.256 3.256 0 01-3.01 3.01 47.953 47.953 0 01-7.21 0 3.256 3.256 0 01-3.01-3.01 47.759 47.759 0 01-.1-1.759L6.97 15.53a.75.75 0 001.06-1.06l-3-3z"
-                                  clip-rule="evenodd"/>
-                        </svg>
-                    {% endif %}
-                </div>
+{% block title %}Support | Dealer Solution BD{% endblock %}
+{% block nav_bar %}
+    <nav class="max-w-lg mx-auto px-4 py-2 bg-themeblue sticky top-0 z-10 flex justify-between items-center">
+        <a href="{% url 'retailer:retailer-home' %}" class="inline-block">
+            <div
+                    class="flex items-center p-2 text-white text-base active:bg-white/20 transition duration-150 ease-in-out">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                    <path fill-rule="evenodd"
+                          d="M11.03 3.97a.75.75 0 010 1.06l-6.22 6.22H21a.75.75 0 010 1.5H4.81l6.22 6.22a.75.75 0 11-1.06 1.06l-7.5-7.5a.75.75 0 010-1.06l7.5-7.5a.75.75 0 011.06 0z"
+                          clip-rule="evenodd"/>
+                </svg>
+                <span class="ml-1 font-medium text-lg">সাপোর্ট</span>
             </div>
+        </a>
+        <a href="{% url 'super_admin:help-support' %}"
+           class="px-2 py-1 rounded-md bg-white text-slate-900">নতুন সাপোর্ট</a>
+    </nav>
+{% endblock %}
+{% block main_content %}
+    <section class="min-h-screen">
+        <div class="space-y-2">
 
-        {% endfor %}
-        <script src="{% static 'assets/js/toastify.js' %}"></script>
-        {% if messages %}
-            {% for message in messages %}
-
-                <script>
-                    // Toast config
-                    const toastConfig = {
-                        text: '',
-                        duration: 2500,
-                        newWindow: true,
-                        gravity: 'top',
-                        position: 'center',
-                    };
-                    Toastify({
-                        ...toastConfig,
-                        text: '{{ message }}',
-                        style: {background: '{{ message.tags }}'}
-                    }).showToast(); //#f43f5e
-                </script>
+            {% for support in supports %}
+                <div class="bg-gray-200/80 shadow px-2 py-2 rounded-md flex justify-between items-center">
+                    <div>
+                        <p>{{ support.created_at }}</p>
+                        <p class="text-sm text-gray-500">{{ support.problems }}</p>
+                    </div>
+                    <div>
+                        {% if support.status == 'DN' %}
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                 class="w-6 h-6 text-green-500">
+                                <path fill-rule="evenodd"
+                                      d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+                                      clip-rule="evenodd"/>
+                            </svg>
+                        {% else %}
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                 class="w-6 h-6 text-gray-500">
+                                <path fill-rule="evenodd"
+                                      d="M12 5.25c1.213 0 2.415.046 3.605.135a3.256 3.256 0 013.01 3.01c.044.583.077 1.17.1 1.759L17.03 8.47a.75.75 0 10-1.06 1.06l3 3a.75.75 0 001.06 0l3-3a.75.75 0 00-1.06-1.06l-1.752 1.751c-.023-.65-.06-1.296-.108-1.939a4.756 4.756 0 00-4.392-4.392 49.422 49.422 0 00-7.436 0A4.756 4.756 0 003.89 8.282c-.017.224-.033.447-.046.672a.75.75 0 101.497.092c.013-.217.028-.434.044-.651a3.256 3.256 0 013.01-3.01c1.19-.09 2.392-.135 3.605-.135zm-6.97 6.22a.75.75 0 00-1.06 0l-3 3a.75.75 0 101.06 1.06l1.752-1.751c.023.65.06 1.296.108 1.939a4.756 4.756 0 004.392 4.392 49.413 49.413 0 007.436 0 4.756 4.756 0 004.392-4.392c.017-.223.032-.447.046-.672a.75.75 0 00-1.497-.092c-.013.217-.028.434-.044.651a3.256 3.256 0 01-3.01 3.01 47.953 47.953 0 01-7.21 0 3.256 3.256 0 01-3.01-3.01 47.759 47.759 0 01-.1-1.759L6.97 15.53a.75.75 0 001.06-1.06l-3-3z"
+                                      clip-rule="evenodd"/>
+                            </svg>
+                        {% endif %}
+                    </div>
+                </div>
             {% endfor %}
-        {% endif %}
-    </div>
-</section>
-</body>
-
-</html>
+        </div>
+    </section>
+{% endblock %}
+{% block sidebar %}
+    {% if user.is_dealer %}
+        {% include 'layout/components/sidebar_dealer.html' %}
+    {% else %}
+        {% include 'layout/components/sidebar.html' %}
+    {% endif %}
+{% endblock %}
