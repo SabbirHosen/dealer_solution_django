@@ -41,9 +41,9 @@ class UserLogin(View):
                     request.session["home_url"] = home_url
                     return redirect("retailer:retailer-home")
                 elif user.is_dealer:
-                    home_url = reverse("retailer:retailer-home")
+                    home_url = reverse("dealer:home")
                     request.session["home_url"] = home_url
-                    return redirect("retailer:retailer-home")
+                    return redirect(home_url)
                 return redirect("dashboard:home")
             else:
                 messages.error(request, "সঠিক ফোন/পাসওয়ার্ড দিন।")

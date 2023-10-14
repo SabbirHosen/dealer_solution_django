@@ -1,0 +1,72 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block title %}Dealer | Dealer Solution BD{% endblock %}
+{% block nav_bar %}
+    <nav class="max-w-lg mx-auto px-4 py-2 bg-themeblue sticky top-0 z-10">
+        <a href="{% url 'retailer:retailer-home' %}" class="inline-block">
+            <div
+                    class="flex items-center p-2 text-white text-base active:bg-white/20 transition duration-150 ease-in-out">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                    <path fill-rule="evenodd"
+                          d="M11.03 3.97a.75.75 0 010 1.06l-6.22 6.22H21a.75.75 0 010 1.5H4.81l6.22 6.22a.75.75 0 11-1.06 1.06l-7.5-7.5a.75.75 0 010-1.06l7.5-7.5a.75.75 0 011.06 0z"
+                          clip-rule="evenodd"/>
+                </svg>
+                <span class="ml-1 font-medium text-lg">ট্রেনিং</span>
+            </div>
+        </a>
+    </nav>
+{% endblock %}
+
+{% block main_content %}
+    <section>
+        <div class="space-y-10 min-h-screen">
+            <div>
+                <h1 class="text-slate-700 font-semibold mb-3">কিভাবে একাউন্ট খুলবেন</h1>
+                <div class="relative" style="padding-top: 56.25%">
+                    <iframe class="absolute inset-0 w-full h-full"
+                            src="https://www.youtube.com/embed/r5kukRMmZNI" frameborder="0"></iframe>
+                </div>
+            </div>
+            <div>
+                <h1 class="text-slate-700 font-semibold mb-3">কিভাবে একাউন্ট খুলবেন</h1>
+                <div class="relative" style="padding-top: 56.25%">
+                    <iframe class="absolute inset-0 w-full h-full"
+                            src="https://www.youtube.com/embed/rkpzYNB6xks" frameborder="0"></iframe>
+                </div>
+            </div>
+            <div>
+                <h1 class="text-slate-700 font-semibold mb-3">কিভাবে একাউন্ট খুলবেন</h1>
+                <div class="relative" style="padding-top: 56.25%">
+                    <iframe class="absolute inset-0 w-full h-full"
+                            src="https://www.youtube-nocookie.com/embed/FMrtSHAAPhM" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+{% block sidebar %}
+    {% include 'layout/components/sidebar_dealer.html' %}
+{% endblock %}
+{% block custom_js %}
+    <script src="{% static 'assets/js/toastify.js' %}"></script>
+    {% if messages %}
+        {% for message in messages %}
+
+            <script>
+                // Toast config
+                const toastConfig = {
+                    text: '',
+                    duration: 2500,
+                    newWindow: true,
+                    gravity: 'top',
+                    position: 'center',
+                };
+                Toastify({
+                    ...toastConfig,
+                    text: '{{ message }}',
+                    style: {background: '{{ message.tags }}'}
+                }).showToast(); //#f43f5e
+            </script>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
