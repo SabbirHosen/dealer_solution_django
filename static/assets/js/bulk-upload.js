@@ -1,17 +1,18 @@
 const apiURL =
-	'https://gist.githubusercontent.com/shahriarshafin/3495d4ff4856b57dfc904811489e1709/raw/d1ea350e479cc9e6dabce4754497ad814ca4a087/gistfile1.txt';
-
+	'https://gist.githubusercontent.com/shahriarshafin/ef53dd78d4d7660040a393c405ed77b1/raw/5290160a09bee2029868551b70b68c5a407012f1/gistfile1.txt';
 const createTableRow = (item) => `
     <tr class="bg-white border-b">
-      <td scope="row" class="px-2 py-4 font-medium text-gray-900">${item.name}</td>
+      <td scope="row" class="px-2 py-4 font-medium text-gray-900">
+	  	<input type="text" name="product_name" readonly value="${item.name}" style="border:none;">
+	  </td>
       <td class="px-2 py-2">
-        <input min="0" type="number" placeholder="0" class="border max-w-[50px]" data-id="${item.id}">
+        <input min="0" type="number" value="0" class="border text-center" name="carton" data-id="${item.id}" style="max-width:50px;">
       </td>
       <td class="px-2 py-2">
-        <input min="0" type="number" placeholder="0" class="border max-w-[50px]" data-id="${item.id}">
+        <input min="0" type="number" value="0" class="border text-center" name="piece" data-id="${item.id}" style="max-width:50px;">
       </td>
-      <td class="px-2 py-2">
-        <span id="subtotal_${item.id}">$0.00</span>
+      <td class="px-2 py-2" style="max-width:50px;">
+        <span id="subtotal_${item.id}">0.00</span>
       </td>
     </tr>
   `;
@@ -28,10 +29,14 @@ const calculateSubtotal = (element) => {
 		return;
 	}
 
-	const [cartoonInput, pieceInput] = Array.from(
-		row.querySelectorAll('input')
-	).map((input) => parseFloat(input.value) || 0);
-	const productName = row.querySelector('td:first-child').innerText.trim();
+	const productNameInput = row.querySelector('input[name="product_name"]');
+	if (!productNameInput) {
+		console.error('Unable to find product name input.');
+		return;
+	}
+
+	const productName = productNameInput.value.trim();
+	console.log(productName);
 	const item = data.find((item) => item.name === productName);
 
 	if (!item) {
@@ -39,11 +44,15 @@ const calculateSubtotal = (element) => {
 		return;
 	}
 
-	const subtotal = (cartoonInput * item.factor + pieceInput) * item.price;
+	const [cartonInput, pieceInput] = Array.from(
+		row.querySelectorAll('input[name="carton"], input[name="piece"]')
+	).map((input) => parseFloat(input.value) || 0);
+
+	const subtotal = (cartonInput * item.factor + pieceInput) * item.price;
 	const subtotalCell = row.querySelector(`#subtotal_${item.id}`);
 
 	if (subtotalCell) {
-		subtotalCell.innerText = `$${subtotal.toFixed(2)}`;
+		subtotalCell.innerText = `${subtotal.toFixed(2)}`;
 		calculateTotal();
 	}
 };
@@ -57,7 +66,7 @@ const calculateTotal = () => {
 		0
 	);
 	const totalSum = document.getElementById('total');
-	totalSum.innerHTML = total.toFixed(2);
+	totalSum.value = total.toFixed(2);
 	console.log('Total:', total.toFixed(2));
 };
 

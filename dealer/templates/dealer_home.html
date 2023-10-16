@@ -27,14 +27,14 @@
 {% block main_content %}
     <section>
         <div class="grid grid-cols-2 gap-4 text-slate-800 font-medium">
-            <a href="product-upload.html">
+            <a href="{% url 'dealer:dealer-product-upload' %}">
                 <div
                         class="p-4 flex flex-col justify-center items-center shadow-md bg-white rounded-md cursor-pointer active:bg-gray-300 transition duration-150 ease-in-out">
                     <img src="{% static 'assets/img/icons/sell-product.png' %}" height="48" width="48" alt="">
                     <p class="font-medium text-gray-900">পণ্য আপলোড</p>
                 </div>
             </a>
-            <a href="./expences-dealer.html">
+            <a href="{% url 'dealer:dealer-expenses' %}">
                 <div
                         class="p-4 flex flex-col justify-center items-center shadow-md bg-white rounded-md cursor-pointer active:bg-gray-300 transition duration-150 ease-in-out">
                     <img src="{% static 'assets/img/icons/expences.png' %}" height="48" width="48" alt="">

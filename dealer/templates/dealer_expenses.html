@@ -1,0 +1,85 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block title %} Expenses | Dealer Solution BD{% endblock %}
+{% block nav_bar %}
+    <nav class="max-w-lg mx-auto px-4 py-2 bg-themeblue sticky top-0 z-10">
+        <a href="{% url 'dealer:home' %}" class="inline-block">
+            <div
+                    class="flex items-center p-2 text-white text-base active:bg-white/20 transition duration-150 ease-in-out">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                    <path fill-rule="evenodd"
+                          d="M11.03 3.97a.75.75 0 010 1.06l-6.22 6.22H21a.75.75 0 010 1.5H4.81l6.22 6.22a.75.75 0 11-1.06 1.06l-7.5-7.5a.75.75 0 010-1.06l7.5-7.5a.75.75 0 011.06 0z"
+                          clip-rule="evenodd"/>
+                </svg>
+                <span class="ml-1 font-medium text-lg">খরচের খাতা</span>
+            </div>
+        </a>
+    </nav>
+{% endblock %}
+{% block main_content %}
+    <section class="min-h-screen">
+        <form action="" id="pageForm" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label class="block mb-2 text-sm font-medium text-gray-900">ছবি যুক্ত করুন</label>
+            <div
+                    class="mb-4 focus:border-gray-900 focus:border-2 flex items-center px-2 w-full bg-[#F6F9FC] border-[1.5px] border-gray-400 rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                     class="w-8 h-8 text-themeblue">
+                    <path fill-rule="evenodd"
+                          d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z"
+                          clip-rule="evenodd"/>
+                </svg>
+                <input type="file" id="myFileInput" accept="image/*" capture="camera" onchange="updateFileName(this)"
+                       class="focus:outline-none focus:shadow-outline py-2 px-3 block appearance-none leading-normal"
+                       name="expenseImage">
+            </div>
+            <select name="productSelected" required
+                    class="mb-4 bg-[#F6F9FC] select block w-full p-2 rounded border-[1.5px] border-gray-400 focus:outline-none focus:border-gray-900 focus:border-2">
+                <option selected disabled="">খরচের ধরন নির্বাচন করুন</option>
+                {% for ex in expanses_name %}
+                    <option value="{{ ex.id }}">{{ ex.name }}</option>
+                {% endfor %}
+            </select>
+
+            <div class="grid grid-cols-2 gap-3 my-4">
+                <div class="relative float-label-input">
+                    <input type="number" id="name" placeholder=" " required name="paidAmount" value="{{ paidAmount }}"
+                           class="w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2">
+                    <label for="name"
+                           class="absolute top-3 left-0 text-gray-400 pointer-events-none transition duration-200 ease-in-outbg-white px-2 text-grey-darker">টাকার
+                        পরিমান</label>
+                </div>
+                <div class="relative float-label-input">
+                    <input type="date" id="datePicker" name="datePicker" placeholder=" " required
+                           value="2023-08-09"
+                           class="w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2">
+                    <label for="name"
+                           class="absolute top-3 left-0 text-gray-400 pointer-events-none transition duration-200 ease-in-outbg-white px-2 text-grey-darker">
+                        তারিখ</label>
+                </div>
+            </div>
+
+            <textarea rows="4" cols="50" name="comment" placeholder="মন্তব্য (না দিলেও হবে)"
+                      class="w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 block appearance-none leading-normal focus:border-gray-900 focus:border-2">{{ comment }}</textarea>
+
+            <button type="submit"
+                    class="mt-10 w-full text-white bg-themeblue hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-md px-5 py-3 text-center">
+                নিশ্চিত করুন
+            </button>
+        </form>
+    </section>
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'layout/components/sidebar_dealer.html' %}
+{% endblock %}
+{% block custom_js %}
+    <script>
+        function updateFileName(input) {
+            var fileName = input.files[0].name;
+            var displayText = document.getElementById("displayText");
+            displayText.textContent = fileName ? "Image Selected" : "Choose File";
+        }
+    </script>
+    {% include 'layout/components/js_scripts.html' %}
+{% endblock %}

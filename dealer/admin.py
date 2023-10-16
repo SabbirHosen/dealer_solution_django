@@ -15,3 +15,8 @@ class VoucherAdmin(admin.ModelAdmin):
 @admin.register(Stock)
 class StockAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(DealerExpense)
+class DealerExpenseAdmin(admin.ModelAdmin):
+    pass
