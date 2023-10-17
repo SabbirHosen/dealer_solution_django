@@ -24,7 +24,7 @@
                 <img src="{% static 'assets/img/icons/new-product-upload.png' %}" height="70" width="70" alt="">
                 <p>নতুন পণ্য আপলোড</p>
             </a>
-            <a href="./upload-old-product.html"
+            <a href="{% url 'dealer:bulk-product-upload' %}"
                class="flex flex-col justify-center items-center w-40 h-40 text-white bg-[#ff823e] hover:bg-[#e97334] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-md p-2 text-center shadow-md">
                 <img src="{% static 'assets/img/icons/new-product-upload.png' %}" height="70" width="70" alt="">
                 <p>পুরাতন পণ্য আপলোড</p>

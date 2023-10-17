@@ -1,6 +1,9 @@
 from django.contrib import messages
+from django.db.models import F
 from django.shortcuts import render, redirect
 from django.views import View
+from django.views.generic import ListView
+from django.http import JsonResponse
 from authentication.mixins import CustomUserPassesTestMixin
 from authentication.strings.string import UNIT_CHOICES
 from .models import DealerExpense, Product, Stock, Voucher
@@ -182,3 +185,31 @@ class NewProductUpload(CustomUserPassesTestMixin, View):
                     "প্রডাক্টি আগে অ্যাড করা হয়েছে। পরিমাণ আপডেটের জন্য আপডেট পেজে যান!",
                 )
                 return render(request, self.template_name, context=product_info)
+
+
+class ProductListViewForAPI(CustomUserPassesTestMixin, ListView):
+    user_type = "is_dealer"
+    model = Product
+    # template_name = "product_list.html"  # This can be any template or an empty string.
+    context_object_name = "products"
+
+    def get_queryset(self):
+        # Select the required fields and rename 'dealer_buying_price' to 'price'
+        return Product.objects.values(
+            "id", "name", "factor", price=F("dealer_buying_price")
+        )
+
+    def render_to_response(self, context, **response_kwargs):
+        # Convert the queryset to a list of dictionaries
+        product_data = list(self.get_queryset())
+
+        # Return the data as JSON
+        return JsonResponse(product_data, safe=False, json_dumps_params={"indent": 4})
+
+
+class ProductBulkUpload(CustomUserPassesTestMixin, View):
+    user_type = "is_dealer"
+    template_name = "bulk_product_upload.html"
+
+    def get(self, request):
+        return render(request=request, template_name=self.template_name)

@@ -23,4 +23,15 @@ urlpatterns = [
         views.NewProductUpload.as_view(),
         name="dealer-new-product-upload",
     ),
+    path(
+        "bulk-product-upload/",
+        views.ProductBulkUpload.as_view(),
+        name="bulk-product-upload",
+    ),
+    #   API
+    path(
+        "bulk-product-upload/product-info-api/",
+        views.ProductListViewForAPI.as_view(),
+        name="product-for-api",
+    ),
 ]
