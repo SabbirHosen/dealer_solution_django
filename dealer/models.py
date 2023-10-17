@@ -37,6 +37,12 @@ class Stock(UserTimeStampMixin):
             "piece": self.quantity % self.product.factor,
         }
 
+    def get_quantity_in_unit(self):
+        return self.quantity // self.product.factor
+
+    def get_quantity_in_piece(self):
+        return self.quantity % self.product.factor
+
 
 class Voucher(UserTimeStampMixin):
     date = models.DateField(auto_now=True)
@@ -53,9 +59,10 @@ class Voucher(UserTimeStampMixin):
     def get_total_buying_price(self):
         return self.quantity * self.product.dealer_buying_price
 
+    @property
     def get_quantity_by_format(self):
         return {
-            self.product.unit: self.quantity // self.product.factor,
+            self.product.get_unit_display(): self.quantity // self.product.factor,
             "piece": self.quantity % self.product.factor,
         }
 

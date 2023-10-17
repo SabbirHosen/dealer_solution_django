@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.db.models import F
+from django.db.models import F, ExpressionWrapper, PositiveIntegerField
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView
@@ -209,7 +209,89 @@ class ProductListViewForAPI(CustomUserPassesTestMixin, ListView):
 
 class ProductBulkUpload(CustomUserPassesTestMixin, View):
     user_type = "is_dealer"
-    template_name = "bulk_product_upload.html"
+    # template_name = "bulk_product_upload.html"
 
-    def get(self, request):
-        return render(request=request, template_name=self.template_name)
+    # def get(self, request):
+    #     return render(request=request, template_name=self.template_name)
+    def post(self, request):
+        post_data = request.POST
+
+        # Initialize a list to store the dictionaries
+        data_list = []
+
+        # Extract the data and create dictionaries
+        product_ids = post_data.getlist("product_id")
+        product_names = post_data.getlist("product_name")
+        cartons = post_data.getlist("carton")
+        pieces = post_data.getlist("piece")
+
+        for i in range(len(product_ids)):
+            item_dict = {
+                "product_id": product_ids[i],
+                "product_name": product_names[i],
+                "carton": cartons[i],
+                "piece": pieces[i],
+            }
+            product_object = Product.objects.filter(id=product_ids[i]).first()
+            if product_object.name == product_names[i]:
+                if int(cartons[i]) > 0 or int(pieces[i]) > 0:
+                    stock_obj = Stock.objects.get(product=product_object)
+                    stock_obj.quantity += int(cartons[i]) * product_object.factor + int(
+                        pieces[i]
+                    )
+                    stock_obj.save()
+                    voucher_obj = Voucher.objects.create(
+                        product=product_object,
+                        quantity=int(cartons[i]) * product_object.factor
+                        + int(pieces[i]),
+                        price=int(
+                            int(cartons[i]) * product_object.factor + int(pieces[i])
+                        )
+                        * product_object.dealer_buying_price,
+                    )
+
+            else:
+                messages.info(
+                    request, f"{product_names[i]} প্রডাক্টি পাওয়া যাইনি।",
+                )
+            # data_list.append(item_dict)
+        messages.success(
+            request, f"প্রোডাক্টগুলো সফলভাবে আপডেট হয়েছে।",
+        )
+        return redirect("dealer:home")
+
+
+class ProductListView(ListView):
+    model = Product
+    template_name = "dealer_product_stock.html"  # Change this to your desired template
+    context_object_name = "products"
+    paginate_by = 10
+
+    def get_queryset(self):
+        # # Define the fields you want to retrieve from the Product and Stock models
+        # fields = [
+        #     "name",
+        #     "company",
+        #     "factor",
+        #     "dealer_buying_price",
+        #     "dealer_selling_price",
+        # ]
+        #
+        # # Retrieve the data and calculate the formatted quantity from Stock
+        # queryset = (
+        #     Product.objects.select_related("stock")
+        #     .annotate(
+        #         quantity_formatted=ExpressionWrapper(
+        #             F("stock__quantity") % F("factor"),
+        #             output_field=PositiveIntegerField(),
+        #         ),
+        #     )
+        #     .values(*fields, "quantity_formatted")
+        # )
+        # print(queryset)
+        #
+        # obj = Product.objects.filter(dealer=self.request.user).values(
+        #     "name", "stock__quantity", "get_quantity_by_format"
+        # )
+        # print(obj)
+        return Product.objects.filter(dealer=self.request.user)

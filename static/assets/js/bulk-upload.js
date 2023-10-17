@@ -2,6 +2,7 @@ const apiURL =
     'product-info-api/';
 const createTableRow = (item) => `
     <tr class="bg-white border-b">
+		<input type="hidden" name="product_id" readonly value="${item.id}" style="border:none;">
       <td scope="row" class="px-2 py-4 font-medium text-gray-900">
 	  	<input type="text" name="product_name" readonly value="${item.name}" style="border:none;">
 	  </td>
@@ -29,15 +30,13 @@ const calculateSubtotal = (element) => {
         return;
     }
 
-    const productNameInput = row.querySelector('input[name="product_name"]');
-    if (!productNameInput) {
-        console.error('Unable to find product name input.');
-        return;
-    }
+    const productId = parseInt(
+        row.querySelector('input[name="product_id"]').value,
+        10
+    );
+    // console.log('Product ID:', productId);
 
-    const productName = productNameInput.value.trim();
-    console.log(productName);
-    const item = data.find((item) => item.name === productName);
+    const item = data.find((item) => item.id === productId);
 
     if (!item) {
         console.error('Unable to find product in API data.');
@@ -67,7 +66,7 @@ const calculateTotal = () => {
     );
     const totalSum = document.getElementById('total');
     totalSum.value = total.toFixed(2);
-    console.log('Total:', total.toFixed(2));
+    // console.log('Total:', total.toFixed(2));
 };
 
 fetch(apiURL)
