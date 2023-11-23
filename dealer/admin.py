@@ -20,3 +20,7 @@ class StockAdmin(admin.ModelAdmin):
 @admin.register(DealerExpense)
 class DealerExpenseAdmin(admin.ModelAdmin):
     pass
+
+@admin.register(DealerRepresentative)
+class DealerRepresentativeAdmin(admin.ModelAdmin):
+    pass

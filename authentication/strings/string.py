@@ -19,3 +19,9 @@ UNIT_CHOICES = (
     ("case", _("কেস")),
     ("package", _("পলি")),
 )
+
+DEALER_REPRESENTATIVE_STATUS = (
+    ('activated', _('সক্রিয়')),
+    ('deactivated', _('নিষ্ক্রিয়')),
+    ('requested', _('অনুরোধ')),
+)
