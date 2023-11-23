@@ -19,49 +19,54 @@
 {% block main_content %}
     <section class="h-[calc(100vh-120px)]">
         <div class="space-y-4 h-full overflow-y-auto">
-            {% for product in products %}
-                <div class="p-4 bg-white rounded-md shadow">
-                    <div class="flex justify-between items-center mb-2">
-                        <div>
-                            <p class="text-base">{{ product.name }}</p>
-                            <p class="text-xs text-slate-500">কোম্পানি: <span>{{ product.company.name }}</span></p>
+            {% if not products %}
+                <span class="ml-1 font-medium text-lg">There is no product added. <a
+                        href="{% url 'dealer:dealer-new-product-upload' %}" class="inline-block"> Click Here</a> to add product </span>
+            {% else %}
+                {% for product in products %}
+                    <div class="p-4 bg-white rounded-md shadow">
+                        <div class="flex justify-between items-center mb-2">
+                            <div>
+                                <p class="text-base">{{ product.name }}</p>
+                                <p class="text-xs text-slate-500">কোম্পানি: <span>{{ product.company.name }}</span></p>
+                            </div>
+                            <a href="{% url 'dealer:dealer-edit-product' product.pk %}"
+                               class="bg-white text-themeblue text-lg w-9 h-9 rounded-full shadow-sm flex justify-center items-center">
+                                <svg
+                                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-6 h-6">
+                                    <path
+                                            d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32l8.4-8.4z"/>
+                                    <path
+                                            d="M5.25 5.25a3 3 0 00-3 3v10.5a3 3 0 003 3h10.5a3 3 0 003-3V13.5a.75.75 0 00-1.5 0v5.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5V8.25a1.5 1.5 0 011.5-1.5h5.25a.75.75 0 000-1.5H5.25z"/>
+                                </svg>
+                            </a>
                         </div>
-                        <a href="#"
-                           class="bg-white text-themeblue text-lg w-9 h-9 rounded-full shadow-sm flex justify-center items-center">
-                            <svg
-                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                    class="w-6 h-6">
-                                <path
-                                        d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32l8.4-8.4z"/>
-                                <path
-                                        d="M5.25 5.25a3 3 0 00-3 3v10.5a3 3 0 003 3h10.5a3 3 0 003-3V13.5a.75.75 0 00-1.5 0v5.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5V8.25a1.5 1.5 0 011.5-1.5h5.25a.75.75 0 000-1.5H5.25z"/>
-                            </svg>
-                        </a>
+                        <div class="flex justify-between px-5">
+                            <div>
+                                <p class="text-xs text-slate-500">ডিপি</p>
+                                <p>{{ product.dealer_buying_price }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500">টিপি</p>
+                                <p>{{ product.dealer_selling_price }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500">{{ product.get_unit_display }}</p>
+                                <p>{{ product.stock.get_quantity_in_unit }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500">পিচ</p>
+                                <p>{{ product.stock.get_quantity_in_piece }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500">মূল্য</p>
+                                <p>{{ product.stock.get_total_buying_price }}</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex justify-between px-5">
-                        <div>
-                            <p class="text-xs text-slate-500">ডিপি</p>
-                            <p>{{ product.dealer_buying_price }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-500">টিপি</p>
-                            <p>{{ product.dealer_selling_price }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-500">{{ product.get_unit_display }}</p>
-                            <p>{{ product.stock.get_quantity_in_unit }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-500">পিচ</p>
-                            <p>{{ product.stock.get_quantity_in_piece }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-500">মূল্য</p>
-                            <p>{{ product.stock.get_total_buying_price }}</p>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            {% endif %}
             {#            <div class="p-4 bg-white rounded-md shadow">#}
             {#                <div class="flex justify-between items-center mb-2">#}
             {#                    <div>#}

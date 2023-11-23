@@ -187,6 +187,101 @@ class NewProductUpload(CustomUserPassesTestMixin, View):
                 return render(request, self.template_name, context=product_info)
 
 
+class EditProduct(CustomUserPassesTestMixin, View):
+    user_type = "is_dealer"
+    template_name = "dealer_edit_product.html"
+
+    def get(self, request, pk):
+        product_obj = Product.objects.get(pk=pk)
+        product_info = {
+            "product_name": product_obj.name,
+            "product_company_id": product_obj.company.id,
+            "product_factor": product_obj.factor,
+            "product_unit": product_obj.unit,
+            "dealer_buying_price_of_product": product_obj.dealer_buying_price,
+            "dealer_selling_price_of_product": product_obj.dealer_selling_price,
+            "product_quantity_in_unit": product_obj.stock.get_quantity_in_unit(),
+            "product_quantity_in_pieces": product_obj.stock.get_quantity_in_piece(),
+            "product_total_price": product_obj.stock.get_total_buying_price(),
+            "product_price_per_piece": product_obj.stock.quantity
+            / product_obj.stock.get_total_buying_price(),
+            "companies": request.user.dealer_companies.all(),
+            "unit_choices": UNIT_CHOICES,
+        }
+        return render(request, template_name=self.template_name, context=product_info)
+
+    def post(self, request, pk):
+        product_name = request.POST.get("productName")
+        product_company_id = request.POST.get("company")
+        product_factor = int(request.POST.get("factor"))
+        product_unit = request.POST.get("boxCategory")
+        dealer_buying_price_of_product = float(request.POST.get("dp"))
+        dealer_selling_price_of_product = float(request.POST.get("tp"))
+        product_quantity_in_unit = int(request.POST.get("cartoon"))
+        product_quantity_in_pieces = int(request.POST.get("pieces"))
+        product_total_price = float(request.POST.get("productPrice"))
+        product_price_per_piece = float(request.POST.get("pricePerpiece"))
+
+        product_info = {
+            "product_name": product_name,
+            "product_company_id": int(product_company_id)
+            if product_company_id
+            else None,
+            "product_factor": product_factor,
+            "product_unit": product_unit,
+            "dealer_buying_price_of_product": dealer_buying_price_of_product,
+            "dealer_selling_price_of_product": dealer_selling_price_of_product,
+            "product_quantity_in_unit": product_quantity_in_unit,
+            "product_quantity_in_pieces": product_quantity_in_pieces,
+            "product_total_price": product_total_price,
+            "product_price_per_piece": product_price_per_piece,
+            "companies": request.user.dealer_companies.all(),
+            "unit_choices": UNIT_CHOICES,
+        }
+        print(product_info)
+        company_obj = Company.objects.filter(id=product_company_id).first()
+        if product_company_id is None or company_obj is None:
+            messages.error(request, "কোম্পানি সিলেক্ট করুন!")
+            return render(request, self.template_name, context=product_info)
+
+        elif product_price_per_piece != dealer_buying_price_of_product:
+            messages.error(
+                request, "ডিলারের ক্রয়মূল্য এবং পণ্যের প্রতি পিচের মূল্য সমান নয়!"
+            )
+            return render(request, self.template_name, context=product_info)
+        else:
+            product_obj = Product.objects.get(pk=pk)
+            if product_obj:
+                product_obj.name = product_name
+                product_obj.company = company_obj
+                product_obj.factor = product_factor
+                product_obj.unit = product_unit
+                product_obj.dealer_buying_price = dealer_buying_price_of_product
+                product_obj.dealer_selling_price = dealer_selling_price_of_product
+                product_obj.stock.quantity = int(
+                    product_factor * product_quantity_in_unit
+                    + product_quantity_in_pieces
+                )
+                product_obj.stock.save()
+                product_obj.save()
+
+                # voucher_obj = Voucher.objects.create(
+                #     product=product_obj,
+                #     quantity=int(
+                #         product_factor * product_quantity_in_unit
+                #         + product_quantity_in_pieces
+                #     ),
+                #     price=product_total_price,
+                # )
+                messages.success(request, "প্রডাক্ট সফলভাবে অ্যাড হয়েছে !")
+                return redirect("dealer:product-stock")
+            else:
+                messages.info(
+                    request, "Not Found",
+                )
+                return render(request, self.template_name, context=product_info)
+
+
 class ProductListViewForAPI(CustomUserPassesTestMixin, ListView):
     user_type = "is_dealer"
     model = Product
@@ -195,8 +290,10 @@ class ProductListViewForAPI(CustomUserPassesTestMixin, ListView):
 
     def get_queryset(self):
         # Select the required fields and rename 'dealer_buying_price' to 'price'
-        return Product.objects.values(
-            "id", "name", "factor", price=F("dealer_buying_price")
+        return (
+            Product.objects.filter(dealer=self.request.user)
+            .values("id", "name", "factor", price=F("dealer_buying_price"))
+            .order_by("id")
         )
 
     def render_to_response(self, context, **response_kwargs):
@@ -294,4 +391,4 @@ class ProductListView(ListView):
         #     "name", "stock__quantity", "get_quantity_by_format"
         # )
         # print(obj)
-        return Product.objects.filter(dealer=self.request.user)
+        return Product.objects.filter(dealer=self.request.user).order_by("id")

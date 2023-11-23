@@ -24,6 +24,11 @@ urlpatterns = [
         name="dealer-new-product-upload",
     ),
     path(
+        "dealer-edit-product-/<int:pk>",
+        views.EditProduct.as_view(),
+        name="dealer-edit-product",
+    ),
+    path(
         "bulk-product-upload/",
         views.ProductBulkUpload.as_view(),
         name="bulk-product-upload",
