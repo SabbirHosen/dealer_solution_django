@@ -87,6 +87,8 @@ class CreateUser(LoginRequiredMixin, View):
                 user.is_dealer = True
             elif user_form.cleaned_data.get("user_role") == "RE":
                 user.is_retailer = True
+            elif user_form.cleaned_data.get("user_role") == "DSR":
+                user.is_delivery_sales_representative = True
             else:
                 pass
             user.save()

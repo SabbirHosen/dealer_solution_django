@@ -47,7 +47,7 @@ class Stock(UserTimeStampMixin):
 class Voucher(UserTimeStampMixin):
     date = models.DateField(auto_now=True)
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
-    quantity = models.PositiveIntegerField(blank=False, null=False)
+    quantity = models.IntegerField(blank=False, null=False)
     price = models.FloatField(blank=False, null=False, default=0)
 
     def __str__(self):

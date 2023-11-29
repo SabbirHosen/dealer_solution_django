@@ -34,6 +34,8 @@ urlpatterns = [
         name="bulk-product-upload",
     ),
     path("product-stock/", views.ProductListView.as_view(), name="product-stock"),
+    path("dsr-list/", views.DSRList.as_view(), name="dsr-list"),
+    path("dsr-request/", views.DSRRequest.as_view(), name="dsr-request"),
     #   API
     path(
         "dealer-product-upload/product-info-api/",

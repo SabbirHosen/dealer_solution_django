@@ -1,12 +1,14 @@
 from django.contrib import messages
 from django.db.models import F, ExpressionWrapper, PositiveIntegerField
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView
 from django.http import JsonResponse
 from authentication.mixins import CustomUserPassesTestMixin
 from authentication.strings.string import UNIT_CHOICES
-from .models import DealerExpense, Product, Stock, Voucher
+from .models import DealerExpense, Product, Stock, Voucher, DealerRepresentative
+from .forms import DSRUserForm, DSRUserInfoForm
 from super_admin.models import ExpenseName, DealerCompany, Company
 
 
@@ -251,6 +253,14 @@ class EditProduct(CustomUserPassesTestMixin, View):
             return render(request, self.template_name, context=product_info)
         else:
             product_obj = Product.objects.get(pk=pk)
+            difference_from_current_stock = (
+                int(
+                    product_factor * product_quantity_in_unit
+                    + product_quantity_in_pieces
+                )
+                - product_obj.stock.quantity
+            )
+
             if product_obj:
                 product_obj.name = product_name
                 product_obj.company = company_obj
@@ -264,15 +274,12 @@ class EditProduct(CustomUserPassesTestMixin, View):
                 )
                 product_obj.stock.save()
                 product_obj.save()
-
-                # voucher_obj = Voucher.objects.create(
-                #     product=product_obj,
-                #     quantity=int(
-                #         product_factor * product_quantity_in_unit
-                #         + product_quantity_in_pieces
-                #     ),
-                #     price=product_total_price,
-                # )
+                if difference_from_current_stock != 0:
+                    voucher_obj = Voucher.objects.create(
+                        product=product_obj,
+                        quantity=difference_from_current_stock,
+                        price=product_total_price,
+                    )
                 messages.success(request, "প্রডাক্ট সফলভাবে অ্যাড হয়েছে !")
                 return redirect("dealer:product-stock")
             else:
@@ -306,10 +313,7 @@ class ProductListViewForAPI(CustomUserPassesTestMixin, ListView):
 
 class ProductBulkUpload(CustomUserPassesTestMixin, View):
     user_type = "is_dealer"
-    # template_name = "bulk_product_upload.html"
 
-    # def get(self, request):
-    #     return render(request=request, template_name=self.template_name)
     def post(self, request):
         post_data = request.POST
 
@@ -351,44 +355,71 @@ class ProductBulkUpload(CustomUserPassesTestMixin, View):
                 messages.info(
                     request, f"{product_names[i]} প্রডাক্টি পাওয়া যাইনি।",
                 )
-            # data_list.append(item_dict)
+
         messages.success(
             request, f"প্রোডাক্টগুলো সফলভাবে আপডেট হয়েছে।",
         )
         return redirect("dealer:home")
 
 
-class ProductListView(ListView):
+class ProductListView(CustomUserPassesTestMixin, ListView):
+    user_type = "is_dealer"
+
     model = Product
-    template_name = "dealer_product_stock.html"  # Change this to your desired template
+    template_name = "dealer_product_stock.html"
     context_object_name = "products"
     paginate_by = 10
 
     def get_queryset(self):
-        # # Define the fields you want to retrieve from the Product and Stock models
-        # fields = [
-        #     "name",
-        #     "company",
-        #     "factor",
-        #     "dealer_buying_price",
-        #     "dealer_selling_price",
-        # ]
-        #
-        # # Retrieve the data and calculate the formatted quantity from Stock
-        # queryset = (
-        #     Product.objects.select_related("stock")
-        #     .annotate(
-        #         quantity_formatted=ExpressionWrapper(
-        #             F("stock__quantity") % F("factor"),
-        #             output_field=PositiveIntegerField(),
-        #         ),
-        #     )
-        #     .values(*fields, "quantity_formatted")
-        # )
-        # print(queryset)
-        #
-        # obj = Product.objects.filter(dealer=self.request.user).values(
-        #     "name", "stock__quantity", "get_quantity_by_format"
-        # )
-        # print(obj)
         return Product.objects.filter(dealer=self.request.user).order_by("id")
+
+
+class DSRList(CustomUserPassesTestMixin, ListView):
+    user_type = "is_dealer"
+
+    model = DealerRepresentative
+    template_name = "dealer_dsr_list.html"
+    context_object_name = "dsrs"
+    paginate_by = 10
+
+    def get_queryset(self):
+        return DealerRepresentative.objects.filter(dealer=self.request.user).order_by(
+            "id"
+        )
+
+
+class DSRRequest(CustomUserPassesTestMixin, View):
+    user_type = "is_dealer"
+    template_name = "dsr_profile.html"
+
+    def get(self, request):
+        user_form = DSRUserForm()
+        user_info_form = DSRUserInfoForm()
+        data = {"forms": [user_form, user_info_form]}
+        return render(request, template_name=self.template_name, context=data)
+
+    def post(self, request):
+        user_form = DSRUserForm(request.POST)
+        user_info_form = DSRUserInfoForm(request.POST, request.FILES)
+        if user_form.is_valid() and user_info_form.is_valid():
+            user = user_form.save(commit=False)
+            user.is_delivery_sales_representative = True
+            user.is_active = False
+            user.save()
+            info = user_info_form.save(commit=False)
+            info.user = user
+            info.save()
+            dsr_relation = DealerRepresentative.objects.get_or_create(
+                dealer=request.user, representative=user, status="requested"
+            )
+            messages.success(request, "নতুন ইউজার তৈরি হয়েছে।")
+            return redirect("dealer:dsr-list")
+        else:
+            data = {"forms": [user_form, user_info_form]}
+            for field, errors in user_form.errors.items():
+                error_messages = ", ".join(errors)
+                messages.error(request, f"{error_messages}")
+            for field, errors in user_info_form.errors.items():
+                error_messages = ", ".join(errors)
+                messages.error(request, f"{error_messages}")
+            return render(request, template_name=self.template_name, context=data)
