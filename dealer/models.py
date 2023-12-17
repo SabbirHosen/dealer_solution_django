@@ -49,6 +49,14 @@ class Voucher(UserTimeStampMixin):
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     quantity = models.IntegerField(blank=False, null=False)
     price = models.FloatField(blank=False, null=False, default=0)
+    dealer = models.ForeignKey(
+        CustomUser,
+        on_delete=models.RESTRICT,
+        limit_choices_to={"is_dealer": True},
+        blank=False,
+        null=False,
+        related_name="dealer_voucher",
+    )
 
     def __str__(self):
         return f"{self.date}->{self.product}->{self.quantity}"
@@ -109,3 +117,6 @@ class DealerRepresentative(UserTimeStampMixin):
         else:
 
             raise ValueError(f"Only DSR or SR  are allowed for this relationship.")
+
+    def __str__(self):
+        return f"{self.representative}--{self.status}"

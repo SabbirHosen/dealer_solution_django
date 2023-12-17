@@ -1,0 +1,95 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block title %} {{ representative.representative }} Details | Dealer Solution BD{% endblock %}
+{% block nav_bar %}
+    <nav class="max-w-lg mx-auto px-4 py-2 bg-themeblue sticky top-0 z-10 flex justify-between items-center">
+        <a href="{% url 'dealer:dsr-list' %}" class="inline-block">
+            <div
+                    class="flex items-center p-2 text-white text-base active:bg-white/20 transition duration-150 ease-in-out">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                    <path fill-rule="evenodd"
+                          d="M11.03 3.97a.75.75 0 010 1.06l-6.22 6.22H21a.75.75 0 010 1.5H4.81l6.22 6.22a.75.75 0 11-1.06 1.06l-7.5-7.5a.75.75 0 010-1.06l7.5-7.5a.75.75 0 011.06 0z"
+                          clip-rule="evenodd"/>
+                </svg>
+                <span class="ml-1 font-medium text-lg">{{ representative.representative }}</span>
+            </div>
+        </a>
+    </nav>
+{% endblock %}
+{% block main_content %}
+    <section class="min-h-screen">
+
+        <div class="flex justify-between mb-10 gap-5">
+            <div class="flex flex-col rounded-md p-4 text-sm bg-white w-full">
+                <div class="flex flex-col flex-auto"><span class="font-medium text-xs text-slate-400">মোট
+                                বিক্রয়</span>
+                    <p class="text-base font-bold block">৳14,023</p>
+                </div>
+            </div>
+            <div class="flex flex-col rounded-md p-4 text-sm bg-white w-full">
+                <div class="flex flex-col flex-auto"><span class="font-medium text-xs text-slate-400">মোট
+                                কালেকশন</span>
+                    <p class="text-base font-bold block">৳14,023</p>
+                </div>
+            </div>
+            <div class="flex flex-col rounded-md p-4 text-sm bg-white w-full">
+                <div class="flex flex-col flex-auto"><span class="font-medium text-xs text-slate-400">মোট
+                                বাকি</span>
+                    <p class="text-base font-bold block">৳14,023</p>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-between mb-10 gap-5">
+            <div class="flex flex-col rounded-md p-4 text-sm bg-white w-full">
+                <div class="flex flex-col flex-auto"><span class="font-medium text-xs text-slate-400">আজকের
+                                বিক্রয়</span>
+                    <p class="text-base font-bold block">৳14,023</p>
+                </div>
+            </div>
+            <div class="flex flex-col rounded-md p-4 text-sm bg-white w-full">
+                <div class="flex flex-col flex-auto"><span class="font-medium text-xs text-slate-400">আজকের
+                                কালেকশন</span>
+                    <p class="text-base font-bold block">৳14,023</p>
+                </div>
+            </div>
+            <div class="flex flex-col rounded-md p-4 text-sm bg-white w-full">
+                <div class="flex flex-col flex-auto"><span class="font-medium text-xs text-slate-400">আজকের
+                                বাকি</span>
+                    <p class="text-base font-bold block">৳14,023</p>
+                </div>
+            </div>
+        </div>
+
+        <div class=" space-y-4">
+            <a href="{% url 'dealer:dsr-product-van-load' representative.pk %}"
+               class="flex items-center bg-white rounded-2xl p-4 text-sm shadow active:bg-gray-300 transition duration-150 ease-in-out">
+                <div class="p-4 bg-[#f6f8c6] rounded-lg mr-5">
+                    <img src="{% static 'assets/img/icons/transport.png' %}" height="48" width="48" alt="">
+
+                </div>
+                <p class="text-base font-bold block">ভানে লোড</p>
+            </a>
+            <a href="./dsr-calculations.html"
+               class="flex items-center bg-white rounded-2xl p-4 text-sm shadow active:bg-gray-300 transition duration-150 ease-in-out">
+                <div class="p-4 bg-[#e3d7f3] rounded-lg mr-5">
+                    <img src="{% static 'assets/img/icons/invoice.png' %}" height="48" width="48" alt="">
+                </div>
+                <p class="text-base font-bold block">হিসাব</p>
+            </a>
+            <a href="./dsr-collection.html"
+               class="flex items-center bg-white rounded-2xl p-4 text-sm shadow active:bg-gray-300 transition duration-150 ease-in-out">
+                <div class="p-4 bg-[#d3eef3] rounded-lg mr-5">
+                    <img src="{% static 'assets/img/icons/collection.png' %}" height="48" width="48" alt="">
+                </div>
+                <p class="text-base font-bold block">কালেকশন</p>
+            </a>
+        </div>
+    </section>
+{% endblock %}
+
+
+{% block sidebar %}
+    {% include 'layout/components/sidebar_dealer.html' %}
+{% endblock %}
+
+

@@ -58,6 +58,7 @@ LOCAL_APPS = [
     "super_admin",
     "retailer",
     "dealer",
+    "dsr",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

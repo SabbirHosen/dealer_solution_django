@@ -6,7 +6,9 @@ from django.views import View
 from django.views.generic import ListView
 from django.http import JsonResponse
 from authentication.mixins import CustomUserPassesTestMixin
+from authentication.models import CustomUser
 from authentication.strings.string import UNIT_CHOICES
+from dsr.models import DSRProductWallet, DSRVoucher
 from .models import DealerExpense, Product, Stock, Voucher, DealerRepresentative
 from .forms import DSRUserForm, DSRUserInfoForm
 from super_admin.models import ExpenseName, DealerCompany, Company
@@ -423,3 +425,87 @@ class DSRRequest(CustomUserPassesTestMixin, View):
                 error_messages = ", ".join(errors)
                 messages.error(request, f"{error_messages}")
             return render(request, template_name=self.template_name, context=data)
+
+
+class DSRDetails(CustomUserPassesTestMixin, View):
+    user_type = "is_dealer"
+    template_name = "dealer_dsr_details.html"
+
+    def get(self, request, pk):
+        representative = DealerRepresentative.objects.get(pk=pk)
+        return render(
+            request,
+            template_name=self.template_name,
+            context={"representative": representative},
+        )
+
+
+class DSRProductVanLoad(CustomUserPassesTestMixin, View):
+    user_type = "is_dealer"
+    template_name = "dealer_dsr_van_load.html"
+
+    def get(self, request, pk):
+        representative = DealerRepresentative.objects.get(pk=pk)
+        return render(
+            request,
+            template_name=self.template_name,
+            context={"representative": representative},
+        )
+
+    def post(self, request, pk):
+        representative = DealerRepresentative.objects.get(pk=pk)
+        post_data = request.POST
+        product_ids = post_data.getlist("product_id")
+        product_names = post_data.getlist("product_name")
+        returns = post_data.getlist("return")
+        receives = post_data.getlist("receive")
+
+        for i in range(0, len(product_ids)):
+            product = Product.objects.filter(id=product_ids[i]).first()
+            if product is not None and int(returns[i]) + int(receives[i]) > 0:
+                total_quantity = int(returns[i]) + int(receives[i])
+                if total_quantity > product.stock.quantity:
+                    messages.error(
+                        request,
+                        f"{product.name} has received {total_quantity} is out of stock.",
+                    )
+                    return redirect("dealer:dsr-product-van-load", pk=pk)
+                dsr_wallet_obj, created = DSRProductWallet.objects.get_or_create(
+                    dsr_product=product, dsr=representative.representative
+                )
+                dsr_wallet_obj.quantity += total_quantity
+                dsr_wallet_obj.returned_quantity = 0
+                dsr_wallet_obj.save()
+                dsr_voucher = DSRVoucher.objects.create(
+                    product=product,
+                    quantity=total_quantity,
+                    price=total_quantity * product.dealer_selling_price,
+                    dsr=representative.representative,
+                )
+                product.stock.quantity -= total_quantity
+                product.stock.save()
+                product.save()
+        messages.success(request, f"ভ্যানে লোড হয়েছে সফলভাবে।")
+        return redirect("dealer:dsr-details", pk=pk)
+
+
+class DSRProductForAPI(CustomUserPassesTestMixin, View):
+    user_type = "is_dealer"
+
+    def get(self, request, pk):
+        dsr = DealerRepresentative.objects.get(pk=pk)
+        dealer = CustomUser.objects.get(pk=request.user.pk)
+        products = Product.objects.filter(dealer=dealer).order_by("id")
+        data = []
+        for product in products:
+            dsr_wallet = DSRProductWallet.objects.filter(
+                dsr_product=product, dsr=dsr.representative
+            ).first()
+            temp = {
+                "id": product.id,
+                "productName": product.name,
+                "stock": product.stock.quantity,
+                "returnProduct": dsr_wallet.returned_quantity if dsr_wallet else 0,
+            }
+            data.append(temp)
+        return JsonResponse(data, safe=False)

@@ -36,10 +36,21 @@ urlpatterns = [
     path("product-stock/", views.ProductListView.as_view(), name="product-stock"),
     path("dsr-list/", views.DSRList.as_view(), name="dsr-list"),
     path("dsr-request/", views.DSRRequest.as_view(), name="dsr-request"),
+    path("dsr-details/<int:pk>", views.DSRDetails.as_view(), name="dsr-details"),
+    path(
+        "dsr-product-van-load/<int:pk>",
+        views.DSRProductVanLoad.as_view(),
+        name="dsr-product-van-load",
+    ),
     #   API
     path(
         "dealer-product-upload/product-info-api/",
         views.ProductListViewForAPI.as_view(),
         name="product-for-api",
+    ),
+    path(
+        "dsr-product-van-load/<int:pk>/dsr/product-list/",
+        views.DSRProductForAPI.as_view(),
+        name="dsr-product-for-api",
     ),
 ]

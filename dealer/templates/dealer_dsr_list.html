@@ -21,16 +21,17 @@
 {% block main_content %}
     <section class="h-[calc(100vh-120px)] space-y-4">
         {% for dsr in dsrs %}
-            <a href="dsr-details.html"
+            <a href="{% url 'dealer:dsr-details' dsr.pk %}"
                class="flex items-center justify-between bg-white rounded-md p-4 text-sm shadow active:bg-gray-300 transition duration-150 ease-in-out">
                 <div class="flex items-center space-x-4"><img class="flex-none w-11 h-11 rounded-full object-cover"
                                                               src="{{ dsr.representative.userinformation.photo.url }}"
                                                               alt="avatar">
                     <div class="flex-auto">
-                        <p class="text-base font-bold block">{{ dsr.representative.get_full_name }}</p><span
-                            class="text-sm text-slate-600">{{ dsr.representative.phone }}</span>
+                        <p class="text-base font-bold block">{{ dsr.representative.get_full_name }}</p>
+                        <span class="text-sm text-slate-600">{{ dsr.representative.phone }}</span>
                     </div>
                 </div>
+                <div class="text-xs badge{% if dsr.status == 'activated' %} badge-success{% elif dsr.status == 'requested' %} badge-warnning{% elif dsr.status == 'deactivated' %} badge-error{% endif %}">{{ dsr.get_status_display }}</div>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
                     <path fill-rule="evenodd"
                           d="M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z"
@@ -39,39 +40,6 @@
             </a>
         {% endfor %}
 
-        {#        <a href="dsr-details.html"#}
-        {#           class="flex items-center justify-between bg-white rounded-md p-4 text-sm shadow active:bg-gray-300 transition duration-150 ease-in-out">#}
-        {#            <div class="flex items-center space-x-4"><img class="flex-none w-11 h-11 rounded-full object-cover"#}
-        {#                                                          src="./assets/img/user/2.jpg" alt="avatar">#}
-        {#                <div class="flex-auto">#}
-        {#                    <p class="text-base font-bold block">শফিক রহমান</p><span#}
-        {#                        class="text-sm text-slate-600">+8801700000000</span>#}
-        {#                </div>#}
-        {#            </div>#}
-        {#            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"#}
-        {#                 class="w-6 h-6">#}
-        {#                <path fill-rule="evenodd"#}
-        {#                      d="M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z"#}
-        {#                      clip-rule="evenodd"/>#}
-        {#            </svg>#}
-        {#        </a>#}
-        {##}
-        {#        <a href="dsr-details.html"#}
-        {#           class="flex items-center justify-between bg-white rounded-md p-4 text-sm shadow active:bg-gray-300 transition duration-150 ease-in-out">#}
-        {#            <div class="flex items-center space-x-4"><img class="flex-none w-11 h-11 rounded-full object-cover"#}
-        {#                                                          src="./assets/img/user/3.jpg" alt="avatar">#}
-        {#                <div class="flex-auto">#}
-        {#                    <p class="text-base font-bold block">সাব্বির হোসেন</p><span#}
-        {#                        class="text-sm text-slate-600">+8801700000000</span>#}
-        {#                </div>#}
-        {#            </div>#}
-        {#            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"#}
-        {#                 class="w-6 h-6">#}
-        {#                <path fill-rule="evenodd"#}
-        {#                      d="M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z"#}
-        {#                      clip-rule="evenodd"/>#}
-        {#            </svg>#}
-        {#        </a>#}
         <!-- custom_pagination.html -->
         {% if is_paginated %}
             <nav class="flex justify-center mt-[-1rem]">
@@ -111,6 +79,3 @@
     {% include 'layout/components/sidebar_dealer.html' %}
 {% endblock %}
 
-{% block custom_js %}
-    <script src="{% static 'assets/js/bulk-upload.js' %}"></script>
-{% endblock %}
