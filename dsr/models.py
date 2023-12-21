@@ -47,3 +47,71 @@ class DSRVoucher(UserTimeStampMixin):
 
     def get_total_selling_price(self):
         return self.quantity * self.product.dealer_selling_price
+
+
+class DSRSellingVoucher(UserTimeStampMixin):
+    date = models.DateField(auto_now=True)
+    product = models.ForeignKey(DSRProductWallet, on_delete=models.PROTECT)
+    sold_quantity = models.IntegerField(blank=False, null=False, default=0)
+    returned_product = models.IntegerField(blank=False, null=False)
+    damage_product = models.IntegerField(blank=False, null=False)
+    dsr = models.ForeignKey(
+        CustomUser,
+        on_delete=models.RESTRICT,
+        limit_choices_to={"is_delivery_sales_representative": True},
+        blank=False,
+        null=False,
+        related_name="dsr_selling_voucher",
+    )
+
+    @property
+    def get_sold_price(self):
+        return self.sold_quantity * self.product.dsr_product.dealer_selling_price
+
+    def __str__(self):
+        return f"{self.date}->{self.product}->{self.returned_product}->{self.damage_product}->{self.dsr.get_full_name()}"
+
+
+class DSRSales(UserTimeStampMixin):
+    date = models.DateField(auto_now=True)
+    dsr = models.ForeignKey(
+        CustomUser,
+        on_delete=models.RESTRICT,
+        limit_choices_to={"is_delivery_sales_representative": True},
+        blank=False,
+        null=False,
+        related_name="dsr_sales",
+    )
+    total_selling_price = models.FloatField(default=0)
+    paid_amount = models.FloatField(default=0)
+
+    @property
+    def get_due_amount(self):
+        return self.total_selling_price - self.paid_amount
+
+    def __str__(self):
+        return f"{self.date}->{self.get_due_amount}"
+
+    class Meta:
+        verbose_name = "DSR Sale"
+        verbose_name_plural = "DSR Sales"
+
+
+class DSRCollections(UserTimeStampMixin):
+    date = models.DateField(auto_now=True)
+    dsr = models.ForeignKey(
+        CustomUser,
+        on_delete=models.RESTRICT,
+        limit_choices_to={"is_delivery_sales_representative": True},
+        blank=False,
+        null=False,
+        related_name="dsr_collection",
+    )
+    collected_amount = models.FloatField(default=0)
+
+    def __str__(self):
+        return f"{self.date}->{self.collected_amount}"
+
+    class Meta:
+        verbose_name = "DSR Collection"
+        verbose_name_plural = "DSR Collections"

@@ -53,8 +53,8 @@ class Voucher(UserTimeStampMixin):
         CustomUser,
         on_delete=models.RESTRICT,
         limit_choices_to={"is_dealer": True},
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
         related_name="dealer_voucher",
     )
 
@@ -120,3 +120,27 @@ class DealerRepresentative(UserTimeStampMixin):
 
     def __str__(self):
         return f"{self.representative}--{self.status}"
+
+
+class DamageStock(UserTimeStampMixin):
+    date = models.DateField(auto_now=True)
+    product = models.OneToOneField(Product, on_delete=models.PROTECT)
+    quantity = models.PositiveIntegerField(blank=False, null=False)
+    dsr = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="damage_product_dsr",
+        blank=False,
+        null=False,
+    )
+    dealer = models.ForeignKey(
+        CustomUser,
+        on_delete=models.RESTRICT,
+        limit_choices_to={"is_dealer": True},
+        blank=True,
+        null=True,
+        related_name="dealer_damage_product",
+    )
+
+    def __str__(self):
+        return f"{self.product}->{self.quantity}->{self.dsr.get_full_name()}"

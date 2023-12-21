@@ -8,8 +8,15 @@ from django.http import JsonResponse
 from authentication.mixins import CustomUserPassesTestMixin
 from authentication.models import CustomUser
 from authentication.strings.string import UNIT_CHOICES
-from dsr.models import DSRProductWallet, DSRVoucher
-from .models import DealerExpense, Product, Stock, Voucher, DealerRepresentative
+from dsr.models import DSRProductWallet, DSRVoucher, DSRSellingVoucher, DSRSales
+from .models import (
+    DealerExpense,
+    Product,
+    Stock,
+    Voucher,
+    DealerRepresentative,
+    DamageStock,
+)
 from .forms import DSRUserForm, DSRUserInfoForm
 from super_admin.models import ExpenseName, DealerCompany, Company
 
@@ -493,6 +500,8 @@ class DSRProductForAPI(CustomUserPassesTestMixin, View):
     user_type = "is_dealer"
 
     def get(self, request, pk):
+        path = request.path
+        # print(path)
         dsr = DealerRepresentative.objects.get(pk=pk)
         dealer = CustomUser.objects.get(pk=request.user.pk)
         products = Product.objects.filter(dealer=dealer).order_by("id")
@@ -504,8 +513,81 @@ class DSRProductForAPI(CustomUserPassesTestMixin, View):
             temp = {
                 "id": product.id,
                 "productName": product.name,
-                "stock": product.stock.quantity,
+                "stock": product.stock.quantity
+                if "dsr-return-product" not in path
+                else dsr_wallet.quantity
+                if dsr_wallet
+                else 0,
                 "returnProduct": dsr_wallet.returned_quantity if dsr_wallet else 0,
             }
             data.append(temp)
         return JsonResponse(data, safe=False)
+
+
+class DSRReturnProduct(CustomUserPassesTestMixin, View):
+    user_type = "is_dealer"
+    template_name = "dealer_dsr_return_product.html"
+
+    def get(self, request, pk):
+        representative = DealerRepresentative.objects.get(pk=pk)
+        return render(
+            request,
+            template_name=self.template_name,
+            context={"representative": representative},
+        )
+
+    def post(self, request, pk):
+        representative = DealerRepresentative.objects.get(pk=pk)
+        dealer = CustomUser.objects.get(pk=request.user.pk)
+        post_data = request.POST
+        print(post_data)
+        product_ids = post_data.getlist("product_id")
+        product_names = post_data.getlist("product_name")
+        returns = post_data.getlist("return")
+        damage = post_data.getlist("damage")
+        total_price = 0
+        for i in range(0, len(product_ids)):
+            product = Product.objects.filter(id=product_ids[i]).first()
+            if product:
+
+                damage_product_quantity = int(damage[i])
+                return_product_quantity = int(returns[i])
+                if damage_product_quantity > 0:
+                    damage_product_obj = DamageStock.objects.create(
+                        dealer=dealer,
+                        dsr=representative.representative,
+                        product=product,
+                        quantity=damage_product_quantity,
+                    )
+                if return_product_quantity > 0:
+                    dsr_wallet_obj = DSRProductWallet.objects.filter(
+                        dsr=representative.representative, dsr_product=product
+                    ).first()
+                    if dsr_wallet_obj:
+                        sold_product_quantity = (
+                            dsr_wallet_obj.quantity - return_product_quantity
+                        )
+                        dsr_wallet_obj.quantity -= return_product_quantity
+                        dsr_wallet_obj.returned_quantity = return_product_quantity
+                        dsr_wallet_obj.dsr_product.stock.quantity += (
+                            return_product_quantity
+                        )
+                        dsr_wallet_obj.dsr_product.stock.save()
+                        dsr_wallet_obj.dsr_product.save()
+                        dsr_wallet_obj.save()
+                        dsr_selling_voucher = DSRSellingVoucher.objects.create(
+                            dsr=representative.representative,
+                            product=dsr_wallet_obj,
+                            sold_quantity=sold_product_quantity,
+                            returned_product=return_product_quantity,
+                            damage_product=damage_product_quantity,
+                        )
+                        total_price += dsr_selling_voucher.get_sold_price
+
+        if total_price > 0:
+            dsr_sales = DSRSales.objects.create(
+                dsr=representative.representative, total_selling_price=total_price
+            )
+
+        messages.success(request, f"ভ্যানে লোড হয়েছে সফলভাবে।")
+        return redirect("dealer:dsr-details", pk=pk)

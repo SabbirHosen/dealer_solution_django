@@ -69,7 +69,7 @@
                 </div>
                 <p class="text-base font-bold block">ভানে লোড</p>
             </a>
-            <a href="./dsr-calculations.html"
+            <a href="{% url 'dealer:dsr-return-product' representative.pk %}"
                class="flex items-center bg-white rounded-2xl p-4 text-sm shadow active:bg-gray-300 transition duration-150 ease-in-out">
                 <div class="p-4 bg-[#e3d7f3] rounded-lg mr-5">
                     <img src="{% static 'assets/img/icons/invoice.png' %}" height="48" width="48" alt="">
@@ -92,4 +92,6 @@
     {% include 'layout/components/sidebar_dealer.html' %}
 {% endblock %}
 
+{% block custom_js %}
+{% endblock %}
 

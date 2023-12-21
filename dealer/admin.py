@@ -21,6 +21,12 @@ class StockAdmin(admin.ModelAdmin):
 class DealerExpenseAdmin(admin.ModelAdmin):
     pass
 
+
 @admin.register(DealerRepresentative)
 class DealerRepresentativeAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(DamageStock)
+class DamageStockAdmin(admin.ModelAdmin):
     pass

@@ -42,6 +42,11 @@ urlpatterns = [
         views.DSRProductVanLoad.as_view(),
         name="dsr-product-van-load",
     ),
+    path(
+        "dsr-return-product/<int:pk>",
+        views.DSRReturnProduct.as_view(),
+        name="dsr-return-product",
+    ),
     #   API
     path(
         "dealer-product-upload/product-info-api/",
@@ -50,6 +55,11 @@ urlpatterns = [
     ),
     path(
         "dsr-product-van-load/<int:pk>/dsr/product-list/",
+        views.DSRProductForAPI.as_view(),
+        name="dsr-product-for-api",
+    ),
+    path(
+        "dsr-return-product/<int:pk>/dsr/product-list/",
         views.DSRProductForAPI.as_view(),
         name="dsr-product-for-api",
     ),
