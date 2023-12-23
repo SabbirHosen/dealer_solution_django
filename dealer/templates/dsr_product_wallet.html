@@ -1,0 +1,342 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block title %} Product Wallet | Dealer Solution BD {% endblock %}
+{% block nav_bar %}
+    <nav class="max-w-lg mx-auto px-4 py-2 bg-themeblue sticky top-0 z-10 flex justify-between items-center">
+        <a href="{{ request.META.HTTP_REFERER }}" class="inline-block">
+            <div
+                    class="flex items-center p-2 text-white text-base active:bg-white/20 transition duration-150 ease-in-out">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                    <path fill-rule="evenodd"
+                          d="M11.03 3.97a.75.75 0 010 1.06l-6.22 6.22H21a.75.75 0 010 1.5H4.81l6.22 6.22a.75.75 0 11-1.06 1.06l-7.5-7.5a.75.75 0 010-1.06l7.5-7.5a.75.75 0 011.06 0z"
+                          clip-rule="evenodd"/>
+                </svg>
+                <span class="ml-1 font-medium text-lg">ডি এস আর পণ্যের স্টক</span>
+            </div>
+        </a>
+    </nav>
+{% endblock %}
+{% block main_content %}
+    <section class="h-[calc(100vh-120px)]">
+        <div class="space-y-4 h-full overflow-y-auto">
+            {{ request.resolver_match.kwargs.pk }}
+            {% if not products %}
+                <span class="ml-1 font-medium text-lg">There is no product added. <a
+                        href="{% url 'dealer:dealer-new-product-upload' %}" class="inline-block"> Click Here</a> to add product </span>
+            {% else %}
+                {% for product in products %}
+                    <div class="p-4 bg-white rounded-md shadow">
+                        <div class="flex justify-between items-center mb-2">
+                            <div>
+                                <p class="text-base">{{ product.dsr_product.name }}</p>
+                                <p class="text-xs text-slate-500">Quantity: <span>{{ product.quantity }}</span></p>
+                            </div>
+
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {#            <div class="p-4 bg-white rounded-md shadow">#}
+            {#                <div class="flex justify-between items-center mb-2">#}
+            {#                    <div>#}
+            {#                        <p class="text-base">Fresh Atta 2Kg</p>#}
+            {#                        <p class="text-xs text-slate-500">কোম্পানি: <span>আকিজ গ্রুপ অফ ইন্ডাস্ট্রিজ</span></p>#}
+            {#                    </div>#}
+            {#                    <a href="#"#}
+            {#                       class="bg-white text-themeblue text-lg w-9 h-9 rounded-full shadow-sm flex justify-center items-center">#}
+            {#                        <svg#}
+            {#                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"#}
+            {#                                class="w-6 h-6">#}
+            {#                            <path#}
+            {#                                    d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32l8.4-8.4z"/>#}
+            {#                            <path#}
+            {#                                    d="M5.25 5.25a3 3 0 00-3 3v10.5a3 3 0 003 3h10.5a3 3 0 003-3V13.5a.75.75 0 00-1.5 0v5.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5V8.25a1.5 1.5 0 011.5-1.5h5.25a.75.75 0 000-1.5H5.25z"/>#}
+            {#                        </svg>#}
+            {#                    </a>#}
+            {#                </div>#}
+            {#                <div class="flex justify-between px-5">#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">ডিপি</p>#}
+            {#                        <p>860</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">টিপি</p>#}
+            {#                        <p>260</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">পরিমাণ</p>#}
+            {#                        <p>303</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">মূল্য</p>#}
+            {#                        <p>602</p>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#            </div>#}
+            {#            <div class="p-4 bg-white rounded-md shadow">#}
+            {#                <div class="flex justify-between items-center mb-2">#}
+            {#                    <div>#}
+            {#                        <p class="text-base">Horlicks Classic Malt 1000 Gm Jar</p>#}
+            {#                        <p class="text-xs text-slate-500">কোম্পানি: <span>আকিজ গ্রুপ অফ ইন্ডাস্ট্রিজ</span></p>#}
+            {#                    </div>#}
+            {#                    <a href="#"#}
+            {#                       class="bg-white text-themeblue text-lg w-9 h-9 rounded-full shadow-sm flex justify-center items-center">#}
+            {#                        <svg#}
+            {#                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"#}
+            {#                                class="w-6 h-6">#}
+            {#                            <path#}
+            {#                                    d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32l8.4-8.4z"/>#}
+            {#                            <path#}
+            {#                                    d="M5.25 5.25a3 3 0 00-3 3v10.5a3 3 0 003 3h10.5a3 3 0 003-3V13.5a.75.75 0 00-1.5 0v5.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5V8.25a1.5 1.5 0 011.5-1.5h5.25a.75.75 0 000-1.5H5.25z"/>#}
+            {#                        </svg>#}
+            {#                    </a>#}
+            {#                </div>#}
+            {#                <div class="flex justify-between px-5">#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">ডিপি</p>#}
+            {#                        <p>860</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">টিপি</p>#}
+            {#                        <p>260</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">পরিমাণ</p>#}
+            {#                        <p>303</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">মূল্য</p>#}
+            {#                        <p>602</p>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#            </div>#}
+            {#            <div class="p-4 bg-white rounded-md shadow">#}
+            {#                <div class="flex justify-between items-center mb-2">#}
+            {#                    <div>#}
+            {#                        <p class="text-base">Dove Hair Fall Rescue Shampoo</p>#}
+            {#                        <p class="text-xs text-slate-500">কোম্পানি: <span>আকিজ গ্রুপ অফ ইন্ডাস্ট্রিজ</span></p>#}
+            {#                    </div>#}
+            {#                    <a href="#"#}
+            {#                       class="bg-white text-themeblue text-lg w-9 h-9 rounded-full shadow-sm flex justify-center items-center">#}
+            {#                        <svg#}
+            {#                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"#}
+            {#                                class="w-6 h-6">#}
+            {#                            <path#}
+            {#                                    d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32l8.4-8.4z"/>#}
+            {#                            <path#}
+            {#                                    d="M5.25 5.25a3 3 0 00-3 3v10.5a3 3 0 003 3h10.5a3 3 0 003-3V13.5a.75.75 0 00-1.5 0v5.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5V8.25a1.5 1.5 0 011.5-1.5h5.25a.75.75 0 000-1.5H5.25z"/>#}
+            {#                        </svg>#}
+            {#                    </a>#}
+            {#                </div>#}
+            {#                <div class="flex justify-between px-5">#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">ডিপি</p>#}
+            {#                        <p>860</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">টিপি</p>#}
+            {#                        <p>260</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">পরিমাণ</p>#}
+            {#                        <p>303</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">মূল্য</p>#}
+            {#                        <p>602</p>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#            </div>#}
+            {#            <div class="p-4 bg-white rounded-md shadow">#}
+            {#                <div class="flex justify-between items-center mb-2">#}
+            {#                    <div>#}
+            {#                        <p class="text-base">বাটার ব্যান ৩৫গ্রাম</p>#}
+            {#                        <p class="text-xs text-slate-500">কোম্পানি: <span>আকিজ গ্রুপ অফ ইন্ডাস্ট্রিজ</span></p>#}
+            {#                    </div>#}
+            {#                    <a href="#"#}
+            {#                       class="bg-white text-themeblue text-lg w-9 h-9 rounded-full shadow-sm flex justify-center items-center">#}
+            {#                        <svg#}
+            {#                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"#}
+            {#                                class="w-6 h-6">#}
+            {#                            <path#}
+            {#                                    d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32l8.4-8.4z"/>#}
+            {#                            <path#}
+            {#                                    d="M5.25 5.25a3 3 0 00-3 3v10.5a3 3 0 003 3h10.5a3 3 0 003-3V13.5a.75.75 0 00-1.5 0v5.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5V8.25a1.5 1.5 0 011.5-1.5h5.25a.75.75 0 000-1.5H5.25z"/>#}
+            {#                        </svg>#}
+            {#                    </a>#}
+            {#                </div>#}
+            {#                <div class="flex justify-between px-5">#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">ডিপি</p>#}
+            {#                        <p>860</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">টিপি</p>#}
+            {#                        <p>260</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">পরিমাণ</p>#}
+            {#                        <p>303</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">মূল্য</p>#}
+            {#                        <p>602</p>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#            </div>#}
+            {#            <div class="p-4 bg-white rounded-md shadow">#}
+            {#                <div class="flex justify-between items-center mb-2">#}
+            {#                    <div>#}
+            {#                        <p class="text-base">বাটার ব্যান ৩৫গ্রাম</p>#}
+            {#                        <p class="text-xs text-slate-500">কোম্পানি: <span>আকিজ গ্রুপ অফ ইন্ডাস্ট্রিজ</span></p>#}
+            {#                    </div>#}
+            {#                    <a href="#"#}
+            {#                       class="bg-white text-themeblue text-lg w-9 h-9 rounded-full shadow-sm flex justify-center items-center">#}
+            {#                        <svg#}
+            {#                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"#}
+            {#                                class="w-6 h-6">#}
+            {#                            <path#}
+            {#                                    d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32l8.4-8.4z"/>#}
+            {#                            <path#}
+            {#                                    d="M5.25 5.25a3 3 0 00-3 3v10.5a3 3 0 003 3h10.5a3 3 0 003-3V13.5a.75.75 0 00-1.5 0v5.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5V8.25a1.5 1.5 0 011.5-1.5h5.25a.75.75 0 000-1.5H5.25z"/>#}
+            {#                        </svg>#}
+            {#                    </a>#}
+            {#                </div>#}
+            {#                <div class="flex justify-between px-5">#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">ডিপি</p>#}
+            {#                        <p>860</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">টিপি</p>#}
+            {#                        <p>260</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">পরিমাণ</p>#}
+            {#                        <p>303</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">মূল্য</p>#}
+            {#                        <p>602</p>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#            </div>#}
+            {#            <div class="p-4 bg-white rounded-md shadow">#}
+            {#                <div class="flex justify-between items-center mb-2">#}
+            {#                    <div>#}
+            {#                        <p class="text-base">বাটার ব্যান ৩৫গ্রাম</p>#}
+            {#                        <p class="text-xs text-slate-500">কোম্পানি: <span>আকিজ গ্রুপ অফ ইন্ডাস্ট্রিজ</span></p>#}
+            {#                    </div>#}
+            {#                    <a href="#"#}
+            {#                       class="bg-white text-themeblue text-lg w-9 h-9 rounded-full shadow-sm flex justify-center items-center">#}
+            {#                        <svg#}
+            {#                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"#}
+            {#                                class="w-6 h-6">#}
+            {#                            <path#}
+            {#                                    d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32l8.4-8.4z"/>#}
+            {#                            <path#}
+            {#                                    d="M5.25 5.25a3 3 0 00-3 3v10.5a3 3 0 003 3h10.5a3 3 0 003-3V13.5a.75.75 0 00-1.5 0v5.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5V8.25a1.5 1.5 0 011.5-1.5h5.25a.75.75 0 000-1.5H5.25z"/>#}
+            {#                        </svg>#}
+            {#                    </a>#}
+            {#                </div>#}
+            {#                <div class="flex justify-between px-5">#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">ডিপি</p>#}
+            {#                        <p>860</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">টিপি</p>#}
+            {#                        <p>260</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">পরিমাণ</p>#}
+            {#                        <p>303</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">মূল্য</p>#}
+            {#                        <p>602</p>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#            </div>#}
+            {#            <div class="p-4 bg-white rounded-md shadow">#}
+            {#                <div class="flex justify-between items-center mb-2">#}
+            {#                    <div>#}
+            {#                        <p class="text-base">বাটার ব্যান ৩৫গ্রাম</p>#}
+            {#                        <p class="text-xs text-slate-500">কোম্পানি: <span>আকিজ গ্রুপ অফ ইন্ডাস্ট্রিজ</span></p>#}
+            {#                    </div>#}
+            {#                    <a href="#"#}
+            {#                       class="bg-white text-themeblue text-lg w-9 h-9 rounded-full shadow-sm flex justify-center items-center">#}
+            {#                        <svg#}
+            {#                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"#}
+            {#                                class="w-6 h-6">#}
+            {#                            <path#}
+            {#                                    d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32l8.4-8.4z"/>#}
+            {#                            <path#}
+            {#                                    d="M5.25 5.25a3 3 0 00-3 3v10.5a3 3 0 003 3h10.5a3 3 0 003-3V13.5a.75.75 0 00-1.5 0v5.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5V8.25a1.5 1.5 0 011.5-1.5h5.25a.75.75 0 000-1.5H5.25z"/>#}
+            {#                        </svg>#}
+            {#                    </a>#}
+            {#                </div>#}
+            {#                <div class="flex justify-between px-5">#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">ডিপি</p>#}
+            {#                        <p>860</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">টিপি</p>#}
+            {#                        <p>260</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">পরিমাণ</p>#}
+            {#                        <p>303</p>#}
+            {#                    </div>#}
+            {#                    <div>#}
+            {#                        <p class="text-xs text-slate-500">মূল্য</p>#}
+            {#                        <p>602</p>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#            </div>#}
+        </div>
+
+        <!-- custom_pagination.html -->
+        {% if is_paginated %}
+            <nav class="flex justify-center mt-[-1rem]">
+                <ul class="inline-flex -space-x-px text-base h-10">
+                    <li>
+                        {% if page_obj.has_previous %}
+                            <a href="?page={{ page_obj.previous_page_number }}"
+                               class="flex items-center justify-center px-4 h-10 ml-0 leading-tight text-black-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700">Previous</a>
+                        {% else %}
+                            <a class="flex items-center justify-center px-4 h-10 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700"
+                               disabled>Previous</a>
+                        {% endif %}
+                    </li>
+                    {% for i in page_obj.paginator.page_range %}
+                        <li>
+                            <a href="?page={{ i }}"
+                               class="flex items-center justify-center px-4 h-10 leading-tight border border-gray-300{% if page_obj.number == i %} bg-blue-50 text-blue-600 {% else %} text-gray-500 bg-white{% endif %} hover:bg-gray-100 hover:text-gray-700">{{ i }}</a>
+                        </li>
+                    {% endfor %}
+                    <li>
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}"
+                               class="flex items-center justify-center px-4 h-10 rounded-r-lg border border-gray-300 bg-white hover-bg-gray-100 hover-text-gray-700">Next</a>
+                        {% else %}
+                            <a class="flex items-center justify-center px-4 h-10 rounded-r-lg border border-gray-300 bg-white"
+                               disabled>Next</a>
+                        {% endif %}
+                    </li>
+                </ul>
+            </nav>
+        {% endif %}
+
+
+    </section>
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'layout/components/sidebar_dealer.html' %}
+{% endblock %}
+
+{% block custom_js %}
+
+{% endblock %}

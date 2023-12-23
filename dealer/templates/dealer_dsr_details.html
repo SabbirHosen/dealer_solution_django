@@ -23,19 +23,19 @@
             <div class="flex flex-col rounded-md p-4 text-sm bg-white w-full">
                 <div class="flex flex-col flex-auto"><span class="font-medium text-xs text-slate-400">মোট
                                 বিক্রয়</span>
-                    <p class="text-base font-bold block">৳14,023</p>
+                    <p class="text-base font-bold block">৳{{ sales_info.total_selling_price_sum }}</p>
                 </div>
             </div>
             <div class="flex flex-col rounded-md p-4 text-sm bg-white w-full">
                 <div class="flex flex-col flex-auto"><span class="font-medium text-xs text-slate-400">মোট
                                 কালেকশন</span>
-                    <p class="text-base font-bold block">৳14,023</p>
+                    <p class="text-base font-bold block">৳{{ sales_info.paid_amount_sum }}</p>
                 </div>
             </div>
             <div class="flex flex-col rounded-md p-4 text-sm bg-white w-full">
                 <div class="flex flex-col flex-auto"><span class="font-medium text-xs text-slate-400">মোট
                                 বাকি</span>
-                    <p class="text-base font-bold block">৳14,023</p>
+                    <p class="text-base font-bold block">৳{{ sales_info.due_amount_sum }}</p>
                 </div>
             </div>
         </div>
@@ -43,19 +43,19 @@
             <div class="flex flex-col rounded-md p-4 text-sm bg-white w-full">
                 <div class="flex flex-col flex-auto"><span class="font-medium text-xs text-slate-400">আজকের
                                 বিক্রয়</span>
-                    <p class="text-base font-bold block">৳14,023</p>
+                    <p class="text-base font-bold block">৳{{ sales_info.total_selling_price_sum_today }}</p>
                 </div>
             </div>
             <div class="flex flex-col rounded-md p-4 text-sm bg-white w-full">
                 <div class="flex flex-col flex-auto"><span class="font-medium text-xs text-slate-400">আজকের
                                 কালেকশন</span>
-                    <p class="text-base font-bold block">৳14,023</p>
+                    <p class="text-base font-bold block">৳{{ sales_info.paid_amount_sum_today }}</p>
                 </div>
             </div>
             <div class="flex flex-col rounded-md p-4 text-sm bg-white w-full">
                 <div class="flex flex-col flex-auto"><span class="font-medium text-xs text-slate-400">আজকের
                                 বাকি</span>
-                    <p class="text-base font-bold block">৳14,023</p>
+                    <p class="text-base font-bold block">৳{{ sales_info.due_amount_sum_today }}</p>
                 </div>
             </div>
         </div>
@@ -69,6 +69,13 @@
                 </div>
                 <p class="text-base font-bold block">ভানে লোড</p>
             </a>
+            <a href="{% url 'dealer:dsr-product-wallet' representative.representative.id %}"
+               class="flex items-center bg-white rounded-2xl p-4 text-sm shadow active:bg-gray-300 transition duration-150 ease-in-out">
+                <div class="p-4 bg-[#e3d7f3] rounded-lg mr-5">
+                    <img src="{% static 'assets/img/icons/product-stock.png' %}" height="48" width="48" alt="">
+                </div>
+                <p class="text-base font-bold block">ডি এস আর পণ্যের স্টক</p>
+            </a>
             <a href="{% url 'dealer:dsr-return-product' representative.pk %}"
                class="flex items-center bg-white rounded-2xl p-4 text-sm shadow active:bg-gray-300 transition duration-150 ease-in-out">
                 <div class="p-4 bg-[#e3d7f3] rounded-lg mr-5">
@@ -76,7 +83,7 @@
                 </div>
                 <p class="text-base font-bold block">হিসাব</p>
             </a>
-            <a href="./dsr-collection.html"
+            <a href="{% url 'dealer:dsr-calculation' representative.representative.pk %}"
                class="flex items-center bg-white rounded-2xl p-4 text-sm shadow active:bg-gray-300 transition duration-150 ease-in-out">
                 <div class="p-4 bg-[#d3eef3] rounded-lg mr-5">
                     <img src="{% static 'assets/img/icons/collection.png' %}" height="48" width="48" alt="">

@@ -1,14 +1,21 @@
 from django.contrib import messages
-from django.db.models import F, ExpressionWrapper, PositiveIntegerField
+from django.db.models import F, ExpressionWrapper, PositiveIntegerField, Sum, FloatField
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views import View
 from django.views.generic import ListView
 from django.http import JsonResponse
 from authentication.mixins import CustomUserPassesTestMixin
 from authentication.models import CustomUser
 from authentication.strings.string import UNIT_CHOICES
-from dsr.models import DSRProductWallet, DSRVoucher, DSRSellingVoucher, DSRSales
+from dsr.models import (
+    DSRProductWallet,
+    DSRVoucher,
+    DSRSellingVoucher,
+    DSRSales,
+    DSRCollections,
+)
 from .models import (
     DealerExpense,
     Product,
@@ -17,7 +24,12 @@ from .models import (
     DealerRepresentative,
     DamageStock,
 )
-from .forms import DSRUserForm, DSRUserInfoForm
+from .forms import (
+    DSRUserForm,
+    DSRUserInfoForm,
+    CollectionForm,
+    DSRIndividualCollectionForm,
+)
 from super_admin.models import ExpenseName, DealerCompany, Company
 
 
@@ -440,10 +452,58 @@ class DSRDetails(CustomUserPassesTestMixin, View):
 
     def get(self, request, pk):
         representative = DealerRepresentative.objects.get(pk=pk)
+        dsr_sales_queryset_for_all_date = DSRSales.objects.filter(
+            dsr=representative.representative
+        )
+        agg_data = dsr_sales_queryset_for_all_date.values("dsr").aggregate(
+            total_selling_price_sum=Sum("total_selling_price"),
+            paid_amount_sum=Sum("paid_amount"),
+            due_amount_sum=Sum("total_selling_price") - Sum("paid_amount"),
+        )
+
+        today = timezone.now().date()
+
+        # Filter the queryset for the representative and today
+        dsr_sales_queryset_today = DSRSales.objects.filter(
+            dsr=representative.representative, date=today
+        )
+
+        # Aggregate sums based on the dsr field
+        agg_data_today = dsr_sales_queryset_today.aggregate(
+            total_selling_price_sum=Sum("total_selling_price"),
+            paid_amount_sum=Sum("paid_amount"),
+            due_amount_sum=Sum("total_selling_price") - Sum("paid_amount"),
+        )
+        print(agg_data_today)
+        print(agg_data)
+
+        sales_info = {
+            "total_selling_price_sum_today": agg_data_today.get(
+                "total_selling_price_sum", 0
+            )
+            if agg_data_today.get("total_selling_price_sum", 0)
+            else 0,
+            "paid_amount_sum_today": agg_data_today.get("paid_amount_sum", 0)
+            if agg_data_today.get("paid_amount_sum", 0)
+            else 0,
+            "due_amount_sum_today": agg_data_today.get("due_amount_sum", 0)
+            if agg_data_today.get("due_amount_sum", 0)
+            else 0,
+            "total_selling_price_sum": agg_data.get("total_selling_price_sum", 0)
+            if agg_data.get("total_selling_price_sum", 0)
+            else 0,
+            "paid_amount_sum": agg_data.get("paid_amount_sum", 0)
+            if agg_data.get("paid_amount_sum", 0)
+            else 0,
+            "due_amount_sum": agg_data.get("due_amount_sum", 0)
+            if agg_data.get("due_amount_sum", 0)
+            else 0,
+        }
+        print(sales_info)
         return render(
             request,
             template_name=self.template_name,
-            context={"representative": representative},
+            context={"representative": representative, "sales_info": sales_info},
         )
 
 
@@ -567,7 +627,7 @@ class DSRReturnProduct(CustomUserPassesTestMixin, View):
                         sold_product_quantity = (
                             dsr_wallet_obj.quantity - return_product_quantity
                         )
-                        dsr_wallet_obj.quantity -= return_product_quantity
+                        dsr_wallet_obj.quantity = 0
                         dsr_wallet_obj.returned_quantity = return_product_quantity
                         dsr_wallet_obj.dsr_product.stock.quantity += (
                             return_product_quantity
@@ -589,5 +649,139 @@ class DSRReturnProduct(CustomUserPassesTestMixin, View):
                 dsr=representative.representative, total_selling_price=total_price
             )
 
-        messages.success(request, f"ভ্যানে লোড হয়েছে সফলভাবে।")
-        return redirect("dealer:dsr-details", pk=pk)
+            messages.success(request, f"ভ্যানে লোড হয়েছে সফলভাবে।")
+            return redirect("dealer:dsr-calculation-individual", pk=dsr_sales.id)
+        else:
+            messages.error(request, "Your sales is zero")
+            return redirect("dealer:dsr-details", pk=representative.representative.pk)
+
+
+class DSRProductWalletView(CustomUserPassesTestMixin, ListView):
+    user_type = "is_dealer"
+
+    model = Product
+    template_name = "dsr_product_wallet.html"
+    context_object_name = "products"
+    paginate_by = 10
+
+    def get_queryset(self):
+        dsr_id = self.kwargs.get("pk", None)
+        if dsr_id is not None:
+            return DSRProductWallet.objects.filter(dsr_id__exact=dsr_id).order_by("id")
+
+
+class DSRIndividualCalculationView(CustomUserPassesTestMixin, View):
+    user_type = "is_dealer"
+    template_name = "dealer_dsr_calculation_individual.html"
+
+    def get(self, request, *args, **kwargs):
+        dealer_sales_id = self.kwargs.get("pk", None)
+        dsr_sales = DSRSales.objects.filter(id=dealer_sales_id).first()
+
+        form = DSRIndividualCollectionForm(
+            initial={"total_bill": dsr_sales.total_selling_price}
+        )
+
+        return render(
+            request, template_name=self.template_name, context={"form": form},
+        )
+
+    def post(self, request, *args, **kwargs):
+        pk = self.kwargs.get("pk", None)
+        dsr_sales = DSRSales.objects.filter(id=pk).first()
+        total_due_amount = 0
+
+        form = DSRIndividualCollectionForm(
+            initial={"total_bill": dsr_sales.total_selling_price}
+        )
+
+        if form.is_valid():
+            prev_due = form.cleaned_data.get("prevDue")
+            total_deposit = form.cleaned_data.get("totalDeposit")
+            print(type(prev_due))
+            collection_obj = DSRCollections.objects.create(
+                dsr=dsr_sales.dsr, collected_amount=total_deposit
+            )
+            for sale in dsr_sales:
+                payable_amount = sale.get_payable_amount
+                due_amount = sale.get_due_amount
+                if due_amount > 0 and total_deposit > 0:
+                    if total_deposit - payable_amount >= 0:
+                        sale.paid_amount += payable_amount
+                        total_deposit -= payable_amount
+                    else:
+                        sale.paid_amount += total_deposit
+                        total_deposit -= total_deposit
+                    sale.save()
+
+            return redirect("dealer:dsr-details", pk=representative.id)
+        else:
+            # Access individual error messages
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{error}")
+            return render(
+                request, template_name=self.template_name, context={"form": form},
+            )
+
+
+class DSRCalculationView(CustomUserPassesTestMixin, View):
+    user_type = "is_dealer"
+    template_name = "dealer_dsr_calculation.html"
+
+    def get(self, request, pk, *args, **kwargs):
+        dsr_id = self.kwargs.get("pk", None)
+        dsr_sales = DSRSales.objects.filter(dsr_id__exact=dsr_id)
+        total_due_amount = 0
+
+        for sale in dsr_sales:
+            total_due_amount += sale.get_due_amount
+
+        form = CollectionForm(initial={"prevDue": total_due_amount})
+
+        return render(
+            request, template_name=self.template_name, context={"form": form},
+        )
+
+    # def post(self, request, pk, *args, **kwargs):
+    #     dsr_id = self.kwargs.get("pk", None)
+    #     representative = DealerRepresentative.objects.filter(
+    #         dealer=request.user, representative_id__exact=dsr_id
+    #     ).first()
+    #     print(dsr_id, representative.representative.id)
+    #     dsr_sales = DSRSales.objects.filter(dsr_id__exact=dsr_id)
+    #     total_due_amount = 0
+    #
+    #     for sale in dsr_sales:
+    #         total_due_amount += sale.get_due_amount
+    #
+    #     form = CollectionForm(request.POST, initial={"prevDue": total_due_amount})
+    #
+    #     if form.is_valid():
+    #         prev_due = form.cleaned_data.get("prevDue")
+    #         total_deposit = form.cleaned_data.get("totalDeposit")
+    #         print(type(prev_due))
+    #         collection_obj = DSRCollections.objects.create(
+    #             dsr=representative.representative, collected_amount=total_deposit
+    #         )
+    #         for sale in dsr_sales:
+    #             payable_amount = sale.get_payable_amount
+    #             due_amount = sale.get_due_amount
+    #             if due_amount > 0 and total_deposit > 0:
+    #                 if total_deposit - payable_amount >= 0:
+    #                     sale.paid_amount += payable_amount
+    #                     total_deposit -= payable_amount
+    #                 else:
+    #                     sale.paid_amount += total_deposit
+    #                     total_deposit -= total_deposit
+    #                 sale.save()
+    #
+    #         return redirect("dealer:dsr-details", pk=representative.id)
+    #     else:
+    #         # Access individual error messages
+    #         for field, errors in form.errors.items():
+    #             for error in errors:
+    #                 messages.error(request, f"{error}")
+    #         return render(
+    #             request, template_name=self.template_name, context={"form": form},
+    #         )

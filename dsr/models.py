@@ -84,10 +84,15 @@ class DSRSales(UserTimeStampMixin):
     )
     total_selling_price = models.FloatField(default=0)
     paid_amount = models.FloatField(default=0)
+    discount = models.FloatField(default=0)
+
+    @property
+    def get_payable_amount(self):
+        return self.total_selling_price - self.discount
 
     @property
     def get_due_amount(self):
-        return self.total_selling_price - self.paid_amount
+        return self.get_payable_amount - self.paid_amount
 
     def __str__(self):
         return f"{self.date}->{self.get_due_amount}"

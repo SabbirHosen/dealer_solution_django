@@ -47,6 +47,21 @@ urlpatterns = [
         views.DSRReturnProduct.as_view(),
         name="dsr-return-product",
     ),
+    path(
+        "dsr-product-wallet/<int:pk>",
+        views.DSRProductWalletView.as_view(),
+        name="dsr-product-wallet",
+    ),
+    path(
+        "dsr-calculation/<int:pk>",
+        views.DSRCalculationView.as_view(),
+        name="dsr-calculation",
+    ),
+    path(
+        "dsr-calculation-individual/<int:pk>",
+        views.DSRIndividualCalculationView.as_view(),
+        name="dsr-calculation-individual",
+    ),
     #   API
     path(
         "dealer-product-upload/product-info-api/",
