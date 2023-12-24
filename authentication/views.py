@@ -80,8 +80,6 @@ class CreateUser(LoginRequiredMixin, View):
         user_form = UserSignupForm(request.POST)
         user_info_form = UserInfoForm(request.POST, request.FILES)
         if user_form.is_valid() and user_info_form.is_valid():
-            # print(user_form.instance.phone)
-            # print(user_form.cleaned_data.get('user_role'))
             user = user_form.save(commit=False)
             if user_form.cleaned_data.get("user_role") == "DE":
                 user.is_dealer = True
@@ -92,17 +90,11 @@ class CreateUser(LoginRequiredMixin, View):
             else:
                 pass
             user.save()
-            info = user_info_form.save(commit=False)
-            info.user = user
-            info.save()
-            # print('-'*100)
-            # print(model_to_dict(user))
-            # print(model_to_dict(info))
+            user_info_form.instance.user = user  # No need to save UserInfo here
+            user_info_form.save()  # Save UserInfo separately
             messages.success(request, "নতুন ইউজার তৈরি হয়েছে।")
             return redirect("dashboard:home")
         else:
-            # print(user_form.errors)
-            # print(user_info_form.errors)
             data = {"forms": [user_form, user_info_form]}
             for field, errors in user_form.errors.items():
                 error_messages = ", ".join(errors)

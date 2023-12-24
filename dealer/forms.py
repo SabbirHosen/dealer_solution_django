@@ -205,19 +205,24 @@ class DSRIndividualCollectionForm(forms.Form):
     )
 
     def clean(self):
+        print("clean is calling")
         cleaned_data = super().clean()
         total_bill = cleaned_data.get("total_bill")
         discount = cleaned_data.get("discount")
         deposit = cleaned_data.get("totalDeposit")
         net_bill = cleaned_data.get("net_bill")
 
-        if deposit <= 0:
-            raise ValidationError("জমা টাকা সঠিক দিন", code="invalid_due_amount")
-        #
-        # # Perform your custom validation
+        # Debug statements
+        print(f"self.data: {self.data}")
+        print(f"cleaned_data: {cleaned_data}")
+
+        if deposit is not None and deposit <= 0:
+            raise ValidationError("জমা টাকা সঠিক দিন", code="invalid_deposit_amount")
+
+        # Perform your custom validation
         if net_bill is not None and deposit is not None and net_bill - deposit < 0:
             raise ValidationError(
-                "মোট বিলের চেয়ে জমা বেশি হতে পারে না", code="invalid_due_amount"
+                "মোট বিলের চেয়ে জমা বেশি হতে পারে না", code="invalid_netbill_amount"
             )
         if (
             total_bill is not None
