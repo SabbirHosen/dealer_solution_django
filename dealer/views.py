@@ -480,8 +480,6 @@ class DSRDetails(CustomUserPassesTestMixin, View):
             - Sum("discount")
             - Sum("paid_amount"),
         )
-        print(agg_data_today)
-        print(agg_data)
 
         sales_info = {
             "total_selling_price_sum_today": agg_data_today.get(
@@ -505,7 +503,6 @@ class DSRDetails(CustomUserPassesTestMixin, View):
             if agg_data.get("due_amount_sum", 0)
             else 0,
         }
-        print(sales_info)
         return render(
             request,
             template_name=self.template_name,
@@ -606,7 +603,6 @@ class DSRReturnProduct(CustomUserPassesTestMixin, View):
         representative = DealerRepresentative.objects.get(pk=pk)
         dealer = CustomUser.objects.get(pk=request.user.pk)
         post_data = request.POST
-        print(post_data)
         product_ids = post_data.getlist("product_id")
         product_names = post_data.getlist("product_name")
         returns = post_data.getlist("return")
@@ -618,22 +614,27 @@ class DSRReturnProduct(CustomUserPassesTestMixin, View):
 
                 damage_product_quantity = int(damage[i])
                 return_product_quantity = int(returns[i])
-                if damage_product_quantity > 0:
-                    damage_product_obj = DamageStock.objects.create(
-                        dealer=dealer,
-                        dsr=representative.representative,
-                        product=product,
-                        quantity=damage_product_quantity,
-                    )
-                if return_product_quantity > 0:
+
+                if return_product_quantity >= 0 or damage_product_quantity >= 0:
+                    if damage_product_quantity > 0:
+                        damage_product_obj = DamageStock.objects.create(
+                            dealer=dealer,
+                            dsr=representative.representative,
+                            product=product,
+                            quantity=damage_product_quantity,
+                        )
                     dsr_wallet_obj = DSRProductWallet.objects.filter(
                         dsr=representative.representative, dsr_product=product
                     ).first()
                     if dsr_wallet_obj:
                         sold_product_quantity = (
-                            dsr_wallet_obj.quantity - return_product_quantity
+                            dsr_wallet_obj.quantity
+                            - return_product_quantity
+                            - damage_product_quantity
                         )
-                        dsr_wallet_obj.quantity = 0
+                        dsr_wallet_obj.quantity -= dsr_wallet_obj.quantity - (
+                            return_product_quantity + damage_product_quantity
+                        )
                         dsr_wallet_obj.returned_quantity = return_product_quantity
                         dsr_wallet_obj.dsr_product.stock.quantity += (
                             return_product_quantity
@@ -659,7 +660,7 @@ class DSRReturnProduct(CustomUserPassesTestMixin, View):
             return redirect("dealer:dsr-calculation-individual", pk=dsr_sales.id)
         else:
             messages.error(request, "Your sales is zero")
-            return redirect("dealer:dsr-details", pk=representative.representative.pk)
+            return redirect("dealer:dsr-details", pk=representative.pk)
 
 
 class DSRProductWalletView(CustomUserPassesTestMixin, ListView):
@@ -702,17 +703,13 @@ class DSRIndividualCalculationView(CustomUserPassesTestMixin, View):
         representative = DealerRepresentative.objects.filter(
             dealer=request.user, representative_id__exact=dsr_sale.dsr.id
         ).first()
-        print(dsr_sale, representative.id)
 
         if form.is_valid():
-            print("form valid")
             # print(form.cleaned_data)
             total_bill = form.cleaned_data.get("total_bill")
-            print("i am ere")
             discount = form.cleaned_data.get("discount")
             deposit = form.cleaned_data.get("totalDeposit")
             net_bill = form.cleaned_data.get("net_bill")
-            print(total_bill, discount, deposit)
             collection_obj = DSRCollections.objects.create(
                 dsr=dsr_sale.dsr, collected_amount=deposit
             )
@@ -739,8 +736,6 @@ class DSRIndividualCalculationView(CustomUserPassesTestMixin, View):
 
             return redirect("dealer:dsr-details", pk=representative.id)
         else:
-            # Access individual error messages
-            print("form valid not")
             # print(form.errors)
             for field, errors in form.errors.items():
                 for error in errors:
@@ -774,8 +769,7 @@ class DSRCalculationView(CustomUserPassesTestMixin, View):
         representative = DealerRepresentative.objects.filter(
             dealer=request.user, representative_id__exact=dsr_id
         ).first()
-        print(dsr_id, representative.representative.id)
-        dsr_sales = DSRSales.objects.filter(dsr_id__exact=dsr_id)
+        dsr_sales = DSRSales.objects.filter(dsr_id__exact=dsr_id).order_by("-date")
         total_due_amount = 0
 
         for sale in dsr_sales:
@@ -786,7 +780,6 @@ class DSRCalculationView(CustomUserPassesTestMixin, View):
         if form.is_valid():
             prev_due = form.cleaned_data.get("prevDue")
             total_deposit = form.cleaned_data.get("totalDeposit")
-            print(type(prev_due))
             collection_obj = DSRCollections.objects.create(
                 dsr=representative.representative, collected_amount=total_deposit
             )

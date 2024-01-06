@@ -20,6 +20,13 @@
     <section class="h-[calc(100vh-120px)]">
         <form action="" method="post">
             {% csrf_token %}
+            <div class="relative float-label-input mb-4">
+                <input type="date" id="datePicker" name="datePicker" placeholder=" " required readonly
+                       class="w-full bg-[#F6F9FC] focus:outline-none focus:shadow-outline border-[1.5px] border-gray-400 rounded py-3 px-3 h-[51px] block appearance-none leading-normal focus:border-gray-900">
+                <label for="name"
+                       class="absolute top-3 left-0 text-gray-400 pointer-events-none transition duration-200 ease-in-outbg-white px-2 text-grey-darker">
+                    তারিখ</label>
+            </div>
             {% for field in form %}
                 <div class="relative float-label-input mb-4">
                     {{ field }}
@@ -87,11 +94,14 @@
         // Initial calculation on page load
         updateTotalDue();
     </script>
-
-    <!-- Error message element -->
-    <div id="error-message" style="display: none; color: red;">
-        Total Due cannot be less than zero.
-    </div>
+    <script>
+        const datePicker = document.getElementById('datePicker');
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        datePicker.value = `${year}-${month}-${day}`;
+    </script>
 
 
 {% endblock %}

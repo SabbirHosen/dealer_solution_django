@@ -124,7 +124,9 @@ class DealerRepresentative(UserTimeStampMixin):
 
 class DamageStock(UserTimeStampMixin):
     date = models.DateField(auto_now=True)
-    product = models.OneToOneField(Product, on_delete=models.PROTECT)
+    product = models.ForeignKey(
+        Product, on_delete=models.PROTECT, related_name="damage_stock"
+    )
     quantity = models.PositiveIntegerField(blank=False, null=False)
     dsr = models.ForeignKey(
         CustomUser,
