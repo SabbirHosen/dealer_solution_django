@@ -64,47 +64,41 @@ class DealerExpenses(CustomUserPassesTestMixin, View):
     expenses_obj = ExpenseName.objects.all()
 
     def get(self, request):
-        return render(
-            request,
-            template_name=self.template_name,
-            context={"expanses_name": self.expenses_obj},
-        )
+        data = {"expenses_name": self.expenses_obj}
+        return render(request, template_name=self.template_name, context=data)
 
     def post(self, request):
         image_input = request.FILES.get("expenseImage")
-        type_of_expense = request.POST.get("productSelected")
+        type_of_expense_id = request.POST.get("productSelected")
         paid_amount_input = request.POST.get("paidAmount")
         date_input = request.POST.get("datePicker")
         comments_input = request.POST.get("comment")
-        expense_obj = ExpenseName.objects.filter(id=type_of_expense).first()
-        if type_of_expense is None or expense_obj is None:
+
+        expense_obj = ExpenseName.objects.filter(id=type_of_expense_id).first()
+
+        if not (type_of_expense_id and expense_obj):
             messages.error(request, "খরচের ধরণ সিলেক্ট করুন !")
             data = {
-                "expanses_name": self.expenses_obj,
+                "expenses_name": self.expenses_obj,
                 "expenseImage": image_input,
                 "paidAmount": paid_amount_input,
                 "comment": comments_input,
                 "datePicker": date_input,
             }
             return render(request, template_name=self.template_name, context=data)
+
+        obj_data = {
+            "name": expense_obj,
+            "paid_amount": paid_amount_input,
+            "date": date_input,
+            "comments": comments_input,
+            "dealer": request.user,
+        }
+
         if image_input:
-            obj = DealerExpense.objects.create(
-                image=image_input,
-                name=expense_obj,
-                paid_amount=paid_amount_input,
-                date=date_input,
-                comments=comments_input,
-                dealer=request.user,
-            )
-        else:
-            obj = DealerExpense.objects.create(
-                name=expense_obj,
-                paid_amount=paid_amount_input,
-                date=date_input,
-                comments=comments_input,
-                dealer=request.user,
-            )
-        obj.save()
+            obj_data["image"] = image_input
+
+        obj = DealerExpense.objects.create(**obj_data)
         messages.success(request, "খরচ সফলভাবে অ্যাড হয়েছে !")
         return redirect("dealer:home")
 
@@ -198,7 +192,6 @@ class NewProductUpload(CustomUserPassesTestMixin, View):
                         product_factor * product_quantity_in_unit
                         + product_quantity_in_pieces
                     ),
-                    price=product_total_price,
                     dealer=request.user,
                 )
                 messages.success(request, "প্রডাক্ট সফলভাবে অ্যাড হয়েছে !")
@@ -298,9 +291,7 @@ class EditProduct(CustomUserPassesTestMixin, View):
                 product_obj.save()
                 if difference_from_current_stock != 0:
                     voucher_obj = Voucher.objects.create(
-                        product=product_obj,
-                        quantity=difference_from_current_stock,
-                        price=product_total_price,
+                        product=product_obj, quantity=difference_from_current_stock,
                     )
                 messages.success(request, "প্রডাক্ট সফলভাবে অ্যাড হয়েছে !")
                 return redirect("dealer:product-stock")
@@ -367,10 +358,6 @@ class ProductBulkUpload(CustomUserPassesTestMixin, View):
                         product=product_object,
                         quantity=int(cartons[i]) * product_object.factor
                         + int(pieces[i]),
-                        price=int(
-                            int(cartons[i]) * product_object.factor + int(pieces[i])
-                        )
-                        * product_object.dealer_buying_price,
                         dealer=request.user,
                     )
 

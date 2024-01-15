@@ -36,7 +36,7 @@
             <select name="productSelected" required
                     class="mb-4 bg-[#F6F9FC] select block w-full p-2 rounded border-[1.5px] border-gray-400 focus:outline-none focus:border-gray-900 focus:border-2">
                 <option selected disabled="">খরচের ধরন নির্বাচন করুন</option>
-                {% for ex in expanses_name %}
+                {% for ex in expenses_name %}
                     <option value="{{ ex.id }}">{{ ex.name }}</option>
                 {% endfor %}
             </select>

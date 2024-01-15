@@ -4,6 +4,7 @@ from authentication.models import CustomUser
 from super_admin.models import Company, ExpenseName
 from authentication.strings import UNIT_CHOICES, DEALER_REPRESENTATIVE_STATUS
 
+
 # Create your models here.
 class Product(UserTimeStampMixin):
     name = models.CharField(max_length=255, blank=False, name=False)
@@ -48,7 +49,8 @@ class Voucher(UserTimeStampMixin):
     date = models.DateField(auto_now=True)
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     quantity = models.IntegerField(blank=False, null=False)
-    price = models.FloatField(blank=False, null=False, default=0)
+    original_buying_price = models.FloatField(blank=False, null=False, default=0.0)
+    original_selling_price = models.FloatField(blank=False, null=False, default=0.0)
     dealer = models.ForeignKey(
         CustomUser,
         on_delete=models.RESTRICT,
@@ -61,11 +63,17 @@ class Voucher(UserTimeStampMixin):
     def __str__(self):
         return f"{self.date}->{self.product}->{self.quantity}"
 
+    def save(self, *args, **kwargs):
+        # Store the original buying and selling prices when saving the voucher
+        self.original_buying_price = self.product.dealer_buying_price
+        self.original_selling_price = self.product.dealer_selling_price
+        super().save(*args, **kwargs)
+
     def get_total_selling_price(self):
-        return self.quantity * self.product.dealer_selling_price
+        return self.quantity * self.original_selling_price
 
     def get_total_buying_price(self):
-        return self.quantity * self.product.dealer_buying_price
+        return self.quantity * self.original_buying_price
 
     @property
     def get_quantity_by_format(self):
@@ -128,6 +136,8 @@ class DamageStock(UserTimeStampMixin):
         Product, on_delete=models.PROTECT, related_name="damage_stock"
     )
     quantity = models.PositiveIntegerField(blank=False, null=False)
+    original_buying_price = models.FloatField(blank=False, null=False, default=0.0)
+    original_selling_price = models.FloatField(blank=False, null=False, default=0.0)
     dsr = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
@@ -143,6 +153,12 @@ class DamageStock(UserTimeStampMixin):
         null=True,
         related_name="dealer_damage_product",
     )
+
+    def save(self, *args, **kwargs):
+        # Store the original buying and selling prices when saving the voucher
+        self.original_buying_price = self.product.dealer_buying_price
+        self.original_selling_price = self.product.dealer_selling_price
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.product}->{self.quantity}->{self.dsr.get_full_name()}"

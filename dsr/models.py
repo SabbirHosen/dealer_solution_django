@@ -31,6 +31,7 @@ class DSRVoucher(UserTimeStampMixin):
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     quantity = models.IntegerField(blank=False, null=False)
     price = models.FloatField(blank=False, null=False, default=0)
+    original_selling_price = models.FloatField(blank=False, null=False, default=0.0)
     dsr = models.ForeignKey(
         CustomUser,
         on_delete=models.RESTRICT,
@@ -46,7 +47,12 @@ class DSRVoucher(UserTimeStampMixin):
         )
 
     def get_total_selling_price(self):
-        return self.quantity * self.product.dealer_selling_price
+        return self.quantity * self.original_selling_price
+
+    def save(self, *args, **kwargs):
+        # Store the original selling prices when saving the voucher
+        self.original_selling_price = self.product.dsr_product.dealer_selling_price
+        super().save(*args, **kwargs)
 
 
 class DSRSellingVoucher(UserTimeStampMixin):
@@ -55,6 +61,7 @@ class DSRSellingVoucher(UserTimeStampMixin):
     sold_quantity = models.IntegerField(blank=False, null=False, default=0)
     returned_product = models.IntegerField(blank=False, null=False)
     damage_product = models.IntegerField(blank=False, null=False)
+    original_selling_price = models.FloatField(blank=False, null=False, default=0.0)
     dsr = models.ForeignKey(
         CustomUser,
         on_delete=models.RESTRICT,
@@ -66,10 +73,15 @@ class DSRSellingVoucher(UserTimeStampMixin):
 
     @property
     def get_sold_price(self):
-        return self.sold_quantity * self.product.dsr_product.dealer_selling_price
+        return self.sold_quantity * self.original_selling_price
 
     def __str__(self):
         return f"{self.date}->{self.product}->{self.returned_product}->{self.damage_product}->{self.dsr.get_full_name()}"
+
+    def save(self, *args, **kwargs):
+        # Store the original selling prices when saving the voucher
+        self.original_selling_price = self.product.dsr_product.dealer_selling_price
+        super().save(*args, **kwargs)
 
 
 class DSRSales(UserTimeStampMixin):
