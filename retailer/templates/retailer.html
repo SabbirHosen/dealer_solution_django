@@ -7,7 +7,7 @@
             <div class="flex justify-between items-center">
                 <div>
                     <p class="text-white/80">বর্তমান ক্যাশ</p>
-                    <h3 class="text-white text-2xl font-bold">৳ <span>{{ my_cash }}</span>
+                    <h3 class="text-white text-2xl font-bold">৳ <span>{{ total_my_cash }}</span>
                     </h3>
                 </div>
                 <label for="sidebar">
@@ -21,21 +21,21 @@
             <div class="mt-3 text-white grid grid-cols-3 divide-x-2 divide-white/20">
                 <div class="flex flex-col items-center">
                     <p class="text-white/80">আজকের বিক্রি</p>
-                    <p class="font-medium text-lg">৳ <span>{{ total_sell }}</span></p>
+                    <p class="font-medium text-lg">৳ <span>{{ today_total_sell }}</span></p>
                 </div>
                 <div class="flex flex-col items-center">
                     <p class="text-white/80">আজকের ব্যয়</p>
-                    <p class="font-medium text-lg">৳ <span>{{ paid_amount__sum }}</span></p>
+                    <p class="font-medium text-lg">৳ <span>{{ today_total_expenses }}</span></p>
                 </div>
                 <div class="flex flex-col items-center">
                     <p class="text-white/80">আজকের বাকি</p>
-                    <p class="font-medium text-lg">৳ <span>{{ total_due }}</span></p>
+                    <p class="font-medium text-lg">৳ <span>{{ today_total_due }}</span></p>
                 </div>
             </div>
         </div>
         <div class="bg-rose-500 px-4 py-1 text-center">
             <p class="text-white text-white/95">মোট বাকি: <span
-                    class="text-white font-medium text-lg">{{ my_due }}</span> টাকা</p>
+                    class="text-white font-medium text-lg">{{ total_my_due }}</span> টাকা</p>
         </div>
     </nav>
 {% endblock %}
