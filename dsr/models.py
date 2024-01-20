@@ -51,7 +51,7 @@ class DSRVoucher(UserTimeStampMixin):
 
     def save(self, *args, **kwargs):
         # Store the original selling prices when saving the voucher
-        self.original_selling_price = self.product.dsr_product.dealer_selling_price
+        self.original_selling_price = self.product.dealer_selling_price
         super().save(*args, **kwargs)
 
 

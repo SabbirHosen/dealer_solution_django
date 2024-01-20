@@ -439,7 +439,7 @@ class DSRDetails(CustomUserPassesTestMixin, View):
             - Sum("paid_amount"),
         )
 
-        today = timezone.now().date()
+        today = timezone.localtime(timezone.now()).date()
 
         # Filter the queryset for the representative and today
         dsr_sales_queryset_today = DSRSales.objects.filter(
@@ -456,24 +456,26 @@ class DSRDetails(CustomUserPassesTestMixin, View):
         )
 
         sales_info = {
-            "total_selling_price_sum_today": agg_data_today.get(
-                "total_selling_price_sum", 0
+            "total_selling_price_sum_today": round(
+                agg_data_today.get("total_selling_price_sum", 0), 2
             )
             if agg_data_today.get("total_selling_price_sum", 0)
             else 0,
-            "paid_amount_sum_today": agg_data_today.get("paid_amount_sum", 0)
+            "paid_amount_sum_today": round(agg_data_today.get("paid_amount_sum", 0), 2)
             if agg_data_today.get("paid_amount_sum", 0)
             else 0,
-            "due_amount_sum_today": agg_data_today.get("due_amount_sum", 0)
+            "due_amount_sum_today": round(agg_data_today.get("due_amount_sum", 0), 2)
             if agg_data_today.get("due_amount_sum", 0)
             else 0,
-            "total_selling_price_sum": agg_data.get("total_selling_price_sum", 0)
+            "total_selling_price_sum": round(
+                agg_data.get("total_selling_price_sum", 0), 2
+            )
             if agg_data.get("total_selling_price_sum", 0)
             else 0,
-            "paid_amount_sum": agg_data.get("paid_amount_sum", 0)
+            "paid_amount_sum": round(agg_data.get("paid_amount_sum", 0), 2)
             if agg_data.get("paid_amount_sum", 0)
             else 0,
-            "due_amount_sum": agg_data.get("due_amount_sum", 0)
+            "due_amount_sum": round(agg_data.get("due_amount_sum", 0), 2)
             if agg_data.get("due_amount_sum", 0)
             else 0,
         }
@@ -511,7 +513,7 @@ class DSRProductVanLoad(CustomUserPassesTestMixin, View):
                 if total_quantity > product.stock.quantity:
                     messages.error(
                         request,
-                        f"{product.name} has received {total_quantity} is out of stock.",
+                        f"{product.name} প্রোডাক্টে {total_quantity} পরিমাণ স্টকে নেই।",
                     )
                     return redirect("dealer:dsr-product-van-load", pk=pk)
                 dsr_wallet_obj, created = DSRProductWallet.objects.get_or_create(
@@ -556,6 +558,9 @@ class DSRProductForAPI(CustomUserPassesTestMixin, View):
                 if dsr_wallet
                 else 0,
                 "returnProduct": dsr_wallet.returned_quantity if dsr_wallet else 0,
+                "productPrice": product.dealer_selling_price
+                if product.dealer_selling_price
+                else 0,
             }
             data.append(temp)
         return JsonResponse(data, safe=False)
@@ -575,19 +580,30 @@ class DSRReturnProduct(CustomUserPassesTestMixin, View):
 
     def post(self, request, pk):
         representative = DealerRepresentative.objects.get(pk=pk)
-        dealer = CustomUser.objects.get(pk=request.user.pk)
+        dealer = request.user
         post_data = request.POST
+        print("-" * 100)
+        print(representative, dealer)
+        print(post_data)
         product_ids = post_data.getlist("product_id")
         product_names = post_data.getlist("product_name")
-        returns = post_data.getlist("return")
-        damage = post_data.getlist("damage")
+        returns = post_data.getlist("product_return")
+        damage = post_data.getlist("product_damage")
+        products_selling_price = post_data.getlist("product_selling_price")
+        products_damage_price = post_data.getlist("product_damage_price")
+        selling_price = post_data.getlist("selling_price")
+        damage_price = post_data.getlist("damage_price")
+        total_selling_price = post_data.getlist("total_selling_price")
+        discount = post_data.getlist("discount")
+        final_amount = post_data.getlist("final_amount")
+        deposit = post_data.getlist("deposit")
+        due_cash = post_data.getlist("due-cash")
         total_price = 0
-        for i in range(0, len(product_ids)):
-            product = Product.objects.filter(id=product_ids[i]).first()
+        for index, product_id in enumerate(product_ids):
+            product = Product.objects.filter(id=product_id).first()
             if product:
-
-                damage_product_quantity = int(damage[i])
-                return_product_quantity = int(returns[i])
+                damage_product_quantity = int(damage[index])
+                return_product_quantity = int(returns[index])
 
                 if return_product_quantity >= 0 or damage_product_quantity >= 0:
                     if damage_product_quantity > 0:
@@ -601,37 +617,72 @@ class DSRReturnProduct(CustomUserPassesTestMixin, View):
                         dsr=representative.representative, dsr_product=product
                     ).first()
                     if dsr_wallet_obj:
-                        sold_product_quantity = (
-                            dsr_wallet_obj.quantity
-                            - return_product_quantity
-                            - damage_product_quantity
-                        )
-                        dsr_wallet_obj.quantity -= dsr_wallet_obj.quantity - (
+                        sold_product_quantity = dsr_wallet_obj.quantity - (
                             return_product_quantity + damage_product_quantity
                         )
-                        dsr_wallet_obj.returned_quantity = return_product_quantity
-                        dsr_wallet_obj.dsr_product.stock.quantity += (
-                            return_product_quantity
-                        )
-                        dsr_wallet_obj.dsr_product.stock.save()
-                        dsr_wallet_obj.dsr_product.save()
-                        dsr_wallet_obj.save()
-                        dsr_selling_voucher = DSRSellingVoucher.objects.create(
-                            dsr=representative.representative,
-                            product=dsr_wallet_obj,
-                            sold_quantity=sold_product_quantity,
-                            returned_product=return_product_quantity,
-                            damage_product=damage_product_quantity,
-                        )
-                        total_price += dsr_selling_voucher.get_sold_price
+                        if sold_product_quantity != 0:
+                            dsr_wallet_obj.quantity -= (
+                                sold_product_quantity
+                                + return_product_quantity
+                                + damage_product_quantity
+                            )
+                            dsr_wallet_obj.returned_quantity = return_product_quantity
+                            dsr_wallet_obj.dsr_product.stock.quantity += (
+                                return_product_quantity
+                            )
+                            dsr_wallet_obj.dsr_product.stock.save()
+                            dsr_wallet_obj.dsr_product.save()
+                            dsr_wallet_obj.save()
+                            dsr_selling_voucher = DSRSellingVoucher.objects.create(
+                                dsr=representative.representative,
+                                product=dsr_wallet_obj,
+                                sold_quantity=sold_product_quantity,
+                                returned_product=return_product_quantity,
+                                damage_product=damage_product_quantity,
+                            )
+                            total_price += dsr_selling_voucher.get_sold_price
+            else:
+                messages.error(
+                    request,
+                    f"দুঃখিত {product_names[index]} প্রোডাক্টি খুঁজে পাওয়া যায়নি !",
+                )
 
         if total_price > 0:
             dsr_sales = DSRSales.objects.create(
                 dsr=representative.representative, total_selling_price=total_price
             )
 
-            messages.success(request, f"ভ্যানে লোড হয়েছে সফলভাবে।")
-            return redirect("dealer:dsr-calculation-individual", pk=dsr_sales.id)
+            # messages.success(request, f"ভ্যানে লোড হয়েছে সফলভাবে।")
+            # return redirect("dealer:dsr-calculation-individual", pk=dsr_sales.id)
+            total_bill = float(total_selling_price[0])
+            discount_input = float(discount[0])
+            deposit_input = float(deposit[0])
+            net_bill = float(final_amount[0])
+            collection_obj = DSRCollections.objects.create(
+                dsr=dsr_sales.dsr, collected_amount=deposit_input
+            )
+            dsr_sales.discount = discount_input
+            # dsr_sales.save()
+
+            payable_amount = dsr_sales.get_payable_amount
+            due_amount = dsr_sales.get_due_amount
+
+            if due_amount > 0 and deposit_input > 0:
+                if deposit_input - payable_amount == 0:
+                    dsr_sales.paid_amount += payable_amount
+                    deposit_input -= payable_amount
+                elif deposit_input - payable_amount <= 0:
+                    dsr_sales.paid_amount += deposit_input
+                    deposit_input -= deposit_input
+                else:
+                    messages.error(request, f"জমার টাকা বিলের থেকে বেশি।")
+                    return redirect(
+                        "dealer:dsr-calculation-individual", pk=dsr_sales.id
+                    )
+
+                dsr_sales.save()
+
+            return redirect("dealer:dsr-details", pk=representative.id)
         else:
             messages.error(request, "Your sales is zero")
             return redirect("dealer:dsr-details", pk=representative.pk)
