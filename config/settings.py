@@ -18,6 +18,9 @@ from django.contrib.messages import constants as messages
 from dotenv import load_dotenv
 
 load_dotenv()
+is_production = os.environ.get("PRODUCTION", False)
+if is_production:
+    import pymysql
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -111,7 +114,8 @@ DATABASES = {
     }
 }
 
-
+if is_production:
+    pymysql.install_as_MySQLdb()
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
